@@ -1,0 +1,125 @@
+{
+  "contact": {
+    "name": "McLOVIN",
+    "title": "Quantum Blockchain Architect",
+    "phone": "+1 (808) 555-0111",
+    "email": "mclovin@hawaii.gov",
+    "links": {
+      "linkedin": "linkedin.com/in/mclovin-hawaii",
+      "github": "github.com/thereal-mclovin"
+    }
+  },
+  "sections": [
+    {
+      "title": "PROFESSIONAL SUMMARY",
+      "isVisible": true,
+      "items": [
+        {
+          "details": [
+            "Time-traveling software engineer with expertise in quantum blockchain and meme optimization",
+            "Pioneered the development of AI-powered fake ID detection systems (ironically)",
+            "Recognized as Hawaii's youngest organ donor and most successful ID verification expert",
+            "Known for writing code that works 60% of the time, every time"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "PROFESSIONAL EXPERIENCE",
+      "isVisible": true,
+      "items": [
+        {
+          "primary": "Superbad Security Inc.",
+          "primaryRight": "Remote",
+          "secondary": "Chief Identity Officer",
+          "secondaryRight": "2007 - Present",
+          "details": [
+            "Developed revolutionary age verification algorithms with 21% accuracy",
+            "Led a team of undercover developers in various convenience stores",
+            "Created the 'McLovinator' - an AI tool that generates believable fake names",
+            "Successfully maintained cover as a 25-year-old Hawaiian organ donor"
+          ]
+        },
+        {
+          "primary": "Hawaii Department of Motor Vehicles",
+          "primaryRight": "Remote",
+          "secondary": "ID Quality Assurance Specialist",
+          "secondaryRight": "2006 - 2007",
+          "details": [
+            "Conducted extensive research on ID photo quality and lighting angles",
+            "Specialized in font selection for government documentation",
+            "Achieved record-breaking ID processing time of 4.20 seconds"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "EDUCATION",
+      "isVisible": true,
+      "items": [
+        {
+          "primary": "Ph.D. in Theoretical Identity Physics",
+          "primaryRight": "Honolulu, HI",
+          "secondary": "University of Hawaii",
+          "secondaryRight": "2020 - Present",
+          "details": [
+            "Research focus: Quantum Superposition of Driver's Licenses"
+          ]
+        },
+        {
+          "primary": "Master's in Advanced ID Technologies",
+          "primaryRight": "Honolulu, HI",
+          "secondary": "Hawaii Institute of Technology",
+          "secondaryRight": "2018 - 2020",
+          "details": [
+            "Thesis: 'Why Nobody Questions Hawaiian Organ Donors'"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "TECHNICAL SKILLS",
+      "isVisible": true,
+      "items": [
+        {
+          "details": [
+            "ID Photography & Lighting",
+            "Quantum Computing in Visual Basic",
+            "Advanced Font Psychology",
+            "Blockchain ID Verification",
+            "Time Travel Debugging",
+            "Meme-Driven Development (MDD)",
+            "Confident Public Speaking (when asked for ID)"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "CERTIFICATIONS",
+      "isVisible": true,
+      "items": [
+        {
+          "details": [
+            "Certified Hawaiian Organ Donor (2007)",
+            "Advanced ID Photoshop Specialist",
+            "Professional Background Actor in Liquor Stores",
+            "Defensive Driver's License Handling"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "PUBLICATIONS",
+      "isVisible": true,
+      "items": [
+        {
+          "details": [
+            "'Why 25 is the Perfect Age' - Journal of Identity Studies",
+            "'The Art of Looking Older Than You Are' - Hawaii Tech Review",
+            "'FOGLE: A New Framework for ID Verification' - Proceedings of the International Conference on Making It Past Bouncers"
+          ]
+        }
+      ]
+    }
+  ]
+} 
