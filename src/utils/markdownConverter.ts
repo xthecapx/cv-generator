@@ -186,33 +186,75 @@ export function jsonToMarkdown(cvData: CvData): string {
   return markdown;
 }
 
-export function isValidCvData(data: any): data is CvData {
+interface CvDataInput {
+  contact: {
+    name: string;
+    title: string;
+    email: string | { text: string; url: string };
+    phone: string | { text: string; url: string };
+    links: {
+      linkedin: string | { text: string; url: string };
+      github: string | { text: string; url: string };
+    };
+  };
+  sections: Array<{
+    title: string;
+    isVisible: boolean;
+    items: Array<{
+      primary?: string;
+      primaryRight?: string;
+      secondary?: string;
+      secondaryRight?: string;
+      details: string[];
+      type?: 'list' | 'paragraph';
+    }>;
+  }>;
+}
+
+export function isValidCvData(data: unknown): data is CvData {
   try {
-    if (!data?.contact || !data?.sections) {
+    const input = data as CvDataInput;
+    if (!input?.contact || !input?.sections) {
       console.error('Missing required top-level fields');
       return false;
     }
 
     // Convert old contact format to new format if needed
-    if (typeof data.contact.phone === 'string') {
-      data.contact = {
-        ...data.contact,
-        phone: { text: data.contact.phone, url: `tel:${data.contact.phone.replace(/\s+/g, '')}` },
-        email: { text: data.contact.email, url: `mailto:${data.contact.email}` },
+    if (typeof input.contact.phone === 'string' || typeof input.contact.email === 'string') {
+      const phone = typeof input.contact.phone === 'string' 
+        ? input.contact.phone 
+        : input.contact.phone.text;
+      
+      const email = typeof input.contact.email === 'string'
+        ? input.contact.email
+        : input.contact.email.text;
+
+      const linkedin = typeof input.contact.links.linkedin === 'string'
+        ? input.contact.links.linkedin
+        : input.contact.links.linkedin.text;
+
+      const github = typeof input.contact.links.github === 'string'
+        ? input.contact.links.github
+        : input.contact.links.github.text;
+
+      input.contact = {
+        ...input.contact,
+        phone: { text: phone, url: `tel:${phone.replace(/\s+/g, '')}` },
+        email: { text: email, url: `mailto:${email}` },
         links: {
-          linkedin: { text: data.contact.links.linkedin, url: `https://${data.contact.links.linkedin}` },
-          github: { text: data.contact.links.github, url: `https://${data.contact.links.github}` }
+          linkedin: { text: linkedin, url: `https://${linkedin}` },
+          github: { text: github, url: `https://${github}` }
         }
       };
     }
 
     // Validate sections
-    if (!Array.isArray(data.sections)) {
+    if (!Array.isArray(input.sections)) {
       console.error('Sections is not an array');
       return false;
     }
 
-    return data.sections.every((section, idx) => {
+    return input.sections.every((section, idx) => {
       if (!section.title || typeof section.isVisible !== 'boolean' || !Array.isArray(section.items)) {
         console.error(`Invalid section at index ${idx}`);
         return false;

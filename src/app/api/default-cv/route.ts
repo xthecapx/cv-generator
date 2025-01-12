@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { loadDefaultCv } from '@/utils/loadDefaultCv';
+import { jsonToMarkdown, isValidCvData } from '@/utils/markdownConverter';
 
 export async function GET() {
   try {
-    const markdownPath = path.join(process.cwd(), 'src/data/default.md');
-    const markdownContent = fs.readFileSync(markdownPath, 'utf-8');
-    return new NextResponse(markdownContent, {
-      headers: {
-        'Content-Type': 'text/markdown',
-      },
-    });
-  } catch (error) {
-    return new NextResponse('Error loading default CV', { status: 500 });
+    const rawData = await loadDefaultCv();
+    if (!isValidCvData(rawData)) {
+      throw new Error('Invalid CV data format');
+    }
+    const markdown = jsonToMarkdown(rawData);
+    return new NextResponse(markdown);
+  } catch {
+    return new NextResponse('Error loading CV', { status: 500 });
   }
 } 
