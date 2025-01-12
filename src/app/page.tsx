@@ -8,6 +8,7 @@ import { markdownToJson, jsonToMarkdown, CvData, isValidCvData, CV_STORAGE_KEY }
 
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     // Try to load from localStorage first
@@ -53,6 +54,10 @@ export default function Home() {
           setCvData(jsonData);
         });
     }
+  };
+
+  const handleToggleEditMode = () => {
+    setIsEditMode(!isEditMode);
   };
 
   if (!cvData) {
@@ -113,22 +118,38 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen p-8 max-w-[8.5in] mx-auto bg-white text-gray-800">
-      <main className="mx-auto leading-relaxed">
-        <Header contact={cvData.contact} />
-        
-        {cvData.sections
-          .filter(section => section.isVisible)
-          .map((section, index) => (
-            <CvSection key={index} section={section} />
-          ))}
-      </main>
+    <div className="min-h-screen bg-black text-gray-800">
+      <div className="flex">
+        <main className={`mx-auto leading-relaxed p-8 bg-white ${
+          isEditMode 
+            ? 'w-1/2 shadow-2xl relative z-10' 
+            : 'max-w-[8.5in]'
+        }`}>
+          <Header contact={cvData.contact} />
+          
+          {cvData.sections
+            .filter(section => section.isVisible)
+            .map((section, index) => (
+              <CvSection key={index} section={section} />
+            ))}
+        </main>
+
+        {isEditMode && (
+          <div className="w-1/2 bg-gray-100 p-8 overflow-auto h-screen sticky top-0">
+            <pre className="font-mono text-sm">
+              {JSON.stringify(cvData, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
 
       <FloatingActions
         onPrint={handlePrint}
         onFileUpload={handleFileUpload}
         onExportMarkdown={handleExportMarkdown}
         onClearStorage={handleClearStorage}
+        onToggleEditMode={handleToggleEditMode}
+        isEditMode={isEditMode}
       />
 
       <style jsx global>{`
