@@ -5,6 +5,7 @@ import { FloatingActions } from '@/components/FloatingActions';
 import { Header } from '@/components/Header';
 import { CvSection } from '@/components/CvSection';
 import { markdownToJson, jsonToMarkdown, CvData, isValidCvData, CV_STORAGE_KEY } from '@/utils/markdownConverter';
+import { CvEditForm } from '@/components/CvEditForm';
 
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
@@ -58,6 +59,10 @@ export default function Home() {
 
   const handleToggleEditMode = () => {
     setIsEditMode(!isEditMode);
+  };
+
+  const handleFormSubmit = (updatedData: CvData) => {
+    setCvData(updatedData);
   };
 
   if (!cvData) {
@@ -136,9 +141,7 @@ export default function Home() {
 
         {isEditMode && (
           <div className="w-1/2 bg-gray-100 p-8 overflow-auto h-screen sticky top-0">
-            <pre className="font-mono text-sm">
-              {JSON.stringify(cvData, null, 2)}
-            </pre>
+            <CvEditForm cvData={cvData} onSubmit={handleFormSubmit} />
           </div>
         )}
       </div>
