@@ -27,7 +27,7 @@ export function CvEditForm({ cvData, onSubmit }: CvEditFormProps) {
           items: section.items.map(item => ({
             ...item,
             details: typeof item.details === 'string' 
-              ? item.details.split('\n').filter(line => line.trim())
+              ? item.details.split('\n').filter((line: string) => line.trim())
               : Array.isArray(item.details)
                 ? item.details
                 : []

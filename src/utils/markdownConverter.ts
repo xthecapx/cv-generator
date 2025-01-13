@@ -5,7 +5,7 @@ interface CvItem {
   primaryRight?: string;
   secondary?: string;
   secondaryRight?: string;
-  details: string[];
+  details: string[] | string;
   type?: 'list' | 'paragraph';
 }
 
@@ -129,10 +129,9 @@ export function markdownToJson(markdown: string): CvData {
         cvData.contact.links.linkedin = parseContactLink(detail);
       } else if (detail.startsWith('GitHub: ')) {
         cvData.contact.links.github = parseContactLink(detail);
-      } else if (currentSection) {
-        if (!currentItem || !currentItem.details) {
-          currentItem = { details: [] };
-          currentSection.items.push(currentItem);
+      } else if (currentSection && currentItem) {
+        if (!Array.isArray(currentItem.details)) {
+          currentItem.details = [];
         }
         currentItem.details.push(detail);
       }
@@ -140,6 +139,9 @@ export function markdownToJson(markdown: string): CvData {
       // Handle paragraph text
       const text = line.trim();
       if (text) {
+        if (!Array.isArray(currentItem.details)) {
+          currentItem.details = [];
+        }
         currentItem.details.push(text);
       }
     }
@@ -171,13 +173,15 @@ export function jsonToMarkdown(cvData: CvData): string {
         if (item.secondary) {
           markdown += `#### ${item.secondary}${item.secondaryRight ? ` | ${item.secondaryRight}` : ''}\n`;
         }
-        if (item.details?.length) {
+        if (item.details) {
+          const detailsArray = Array.isArray(item.details) ? item.details : [item.details];
+          
           if (item.type === 'paragraph') {
             // Join paragraph lines with spaces
-            markdown += `${item.details.join(' ')}\n`;
+            markdown += `${detailsArray.join(' ')}\n`;
           } else {
             // Regular bullet point list
-            item.details.forEach((detail) => {
+            detailsArray.forEach((detail) => {
               markdown += `- ${detail}\n`;
             });
           }

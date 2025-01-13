@@ -5,6 +5,23 @@ interface CvSectionProps {
 }
 
 export function CvSection({ section }: CvSectionProps) {
+  const renderDetails = (details: string | string[], type?: 'list' | 'paragraph') => {
+    // Convert string to array if needed
+    const detailsArray = typeof details === 'string' ? [details] : details;
+
+    if (type === 'paragraph') {
+      return <p className="text-sm mt-1">{detailsArray.join(' ')}</p>;
+    }
+
+    return (
+      <ul className="text-sm list-disc ml-4 mt-2">
+        {detailsArray.map((detail, detailIndex) => (
+          <li key={detailIndex}>{detail}</li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
     <section className="mb-6">
       <h2 className="text-lg font-extrabold uppercase border-b-2 border-gray-800 mb-3 text-gray-900">
@@ -24,18 +41,8 @@ export function CvSection({ section }: CvSectionProps) {
               <div>{item.secondaryRight}</div>
             </div>
           )}
-          {item.details && item.details.length > 0 && (
-            item.type === 'paragraph' ? (
-              <p className="text-sm mt-1">
-                {item.details.join(' ')}
-              </p>
-            ) : (
-              <ul className="text-sm list-disc ml-4 mt-2">
-                {item.details.map((detail, detailIndex) => (
-                  <li key={detailIndex}>{detail}</li>
-                ))}
-              </ul>
-            )
+          {item.details && (
+            renderDetails(item.details, item.type)
           )}
         </div>
       ))}
