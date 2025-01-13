@@ -6,8 +6,7 @@ import { Header } from '@/components/Header';
 import { CvSection } from '@/components/CvSection';
 import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
 import { CvEditForm } from '@/components/CvEditForm';
-import { CvData } from '@/utils/cvConverter';
-import { CV_STORAGE_KEY, isValidCvData } from '@/utils/markdownConverter';
+import { CvData, CV_STORAGE_KEY } from '@/utils/cvConverter';
 
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
@@ -63,10 +62,6 @@ export default function Home() {
     setIsEditMode(!isEditMode);
   };
 
-  const handleFormSubmit = (updatedData: CvData) => {
-    setCvData(updatedData);
-  };
-
   if (!cvData) {
     return <div>Loading...</div>;
   }
@@ -88,11 +83,6 @@ export default function Home() {
             // Handle JSON file
             const parsedData: CvData = JSON.parse(content);
             console.log('Parsed JSON:', parsedData);
-            
-            if (!isValidCvData(parsedData)) {
-              console.error('Invalid CV data structure:', parsedData);
-              throw new Error('The JSON file does not match the expected CV format');
-            }
             jsonData = parsedData;
           } else if (file.name.toLowerCase().endsWith('.md')) {
             // Handle Markdown file
@@ -135,7 +125,6 @@ export default function Home() {
           <Header contact={cvData.contact} />
           
           {cvData.sections
-            .filter(section => section.isVisible)
             .map((section, index) => (
               <CvSection key={index} section={section} />
             ))}

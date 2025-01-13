@@ -16,8 +16,8 @@ export function loadDefaultCv() {
         phone: '',
         email: '',
         links: {
-          linkedin: '',
-          github: ''
+          linkedin: { text: '', url: '' },
+          github: { text: '', url: '' }
         }
       },
       sections: []

@@ -5,10 +5,9 @@ interface CvSectionProps {
 }
 
 export function CvSection({ section }: CvSectionProps) {
-  console.log({ section });
   return (
-    <section className="mb-6">
-      <h2 className="text-lg font-extrabold uppercase border-b-2 border-gray-800 mb-3 text-gray-900">
+    <section className="mb-4">
+      <h2 className="text-lg font-extrabold uppercase border-b-2 border-gray-800 text-gray-900">
         {section.title}
       </h2>
       {section.items.map((item, itemIndex) => (

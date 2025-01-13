@@ -5,14 +5,19 @@
     "phone": "+1 (808) 555-0111",
     "email": "mclovin@hawaii.gov",
     "links": {
-      "linkedin": "linkedin.com/in/mclovin-hawaii",
-      "github": "github.com/thereal-mclovin"
+      "linkedin": {
+        "text": "mclovin-hawaii",
+        "url": "linkedin.com/in/mclovin-hawaii"
+      },
+      "github": {
+        "text": "thereal-mclovin",
+        "url": "github.com/thereal-mclovin"
+      }
     }
   },
   "sections": [
     {
       "title": "PROFESSIONAL SUMMARY",
-      "isVisible": true,
       "items": [
         {
           "details": [
@@ -26,7 +31,6 @@
     },
     {
       "title": "PROFESSIONAL EXPERIENCE",
-      "isVisible": true,
       "items": [
         {
           "primary": "Superbad Security Inc.",
@@ -55,7 +59,6 @@
     },
     {
       "title": "EDUCATION",
-      "isVisible": true,
       "items": [
         {
           "primary": "Ph.D. in Theoretical Identity Physics",
@@ -79,7 +82,6 @@
     },
     {
       "title": "TECHNICAL SKILLS",
-      "isVisible": true,
       "items": [
         {
           "details": [
@@ -96,7 +98,6 @@
     },
     {
       "title": "CERTIFICATIONS",
-      "isVisible": true,
       "items": [
         {
           "details": [
@@ -110,7 +111,6 @@
     },
     {
       "title": "PUBLICATIONS",
-      "isVisible": true,
       "items": [
         {
           "details": [

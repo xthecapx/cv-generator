@@ -5,14 +5,19 @@
     "phone": "+57 301 4915565",
     "email": "ing.cristian.marquez@gmail.com",
     "links": {
-      "linkedin": "linkedin.com/in/thecap-developer",
-      "github": "github.com/xthecapx"
+      "linkedin": {
+        "text": "thecap-developer",
+        "url": "linkedin.com/in/thecap-developer"
+      },
+      "github": {
+        "text": "xthecapx",
+        "url": "github.com/xthecapx"
+      }
     }
   },
   "sections": [
     {
       "title": "PROFESSIONAL SUMMARY",
-      "isVisible": true,
       "items": [
         {
           "details": [
@@ -26,7 +31,6 @@
     },
     {
       "title": "PROFESSIONAL EXPERIENCE",
-      "isVisible": true,
       "items": [
         {
           "primary": "Godaddy",
@@ -163,7 +167,6 @@
     },
     {
       "title": "EDUCATION",
-      "isVisible": true,
       "items": [
         {
           "primary": "Ph.D. in Software Engineering",
@@ -198,7 +201,6 @@
     },
     {
       "title": "RESEARCH & PUBLICATIONS",
-      "isVisible": false,
       "items": [
         {
           "primary": "Optimization of a Fuzzy System for Automatic Detection of Planetary Transits",
@@ -220,7 +222,6 @@
     },
     {
       "title": "CERTIFICATIONS",
-      "isVisible": false,
       "items": [
         {
           "details": [

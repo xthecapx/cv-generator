@@ -21,7 +21,6 @@ export interface CvItem {
 
 export interface CvSection {
   title: string;
-  isVisible: boolean;
   items: CvItem[];
 }
 
@@ -29,6 +28,8 @@ export interface CvData {
   contact: ContactInfo;
   sections: CvSection[];
 }
+
+export const CV_STORAGE_KEY = 'cvData';
 
 export function markdownToCv(markdown: string): CvData {
   const lines = markdown.split('\n').filter(line => line.trim());
@@ -82,7 +83,6 @@ export function markdownToCv(markdown: string): CvData {
       // Create new section and reset current item
       currentSection = {
         title: line.replace('## ', ''),
-        isVisible: true,
         items: []
       };
       currentItem = null;
@@ -133,8 +133,6 @@ export function markdownToCv(markdown: string): CvData {
     cv.sections.push(currentSection);
   }
 
-  debugger;
-
   return cv;
 }
 
@@ -155,8 +153,6 @@ export function cvToMarkdown(cv: CvData): string {
 
   // Other sections
   cv.sections.forEach(section => {
-    if (!section.isVisible) return;
-
     markdown += `## ${section.title}\n`;
     
     section.items.forEach(item => {

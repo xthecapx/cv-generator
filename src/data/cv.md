@@ -1,5 +1,5 @@
 # CRISTIAN DANIEL MARQUEZ BARRIOS
-Software Developer
+- title: Software Developer
 - Phone: +57 301 4915565
 - Email: ing.cristian.marquez@gmail.com
 - LinkedIn: linkedin.com/in/thecap-developer
