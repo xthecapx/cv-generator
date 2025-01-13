@@ -1,6 +1,5 @@
 # CRISTIAN DANIEL MARQUEZ BARRIOS
 Software Developer
-
 - Phone: +57 301 4915565
 - Email: ing.cristian.marquez@gmail.com
 - LinkedIn: linkedin.com/in/thecap-developer
@@ -13,7 +12,6 @@ Software Developer
 - Currently pursuing Ph.D. focused on quantum computing technologies while actively contributing to the Latin American tech community as a speaker
 
 ## PROFESSIONAL EXPERIENCE
-
 ### Godaddy | Bogotá, CO
 #### Javascript Developer | Jun 2023 - Present
 - Started as contractor, promoted to full-time employee
@@ -91,7 +89,6 @@ Software Developer
 - Designed WordPress website for Colombia Medios
 
 ## EDUCATION
-
 ### Ph.D. in Software Engineering | Bogota, CO
 #### Universidad de los Andes | 2023 - Present
 - Research focus: Quantum Computing

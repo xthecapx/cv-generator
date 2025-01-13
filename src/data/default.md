@@ -1,6 +1,5 @@
 # McLOVIN
-Quantum Blockchain Architect
-
+- title: Quantum Blockchain Architect
 - Phone: +1 (808) 555-0111
 - Email: mclovin@hawaii.gov
 - LinkedIn: linkedin.com/in/mclovin-hawaii
@@ -13,7 +12,6 @@ Quantum Blockchain Architect
 - Known for writing code that works 60% of the time, every time
 
 ## PROFESSIONAL EXPERIENCE
-
 ### Superbad Security Inc. | Remote
 #### Chief Identity Officer | 2007 - Present
 - Developed revolutionary age verification algorithms with 21% accuracy
@@ -28,7 +26,6 @@ Quantum Blockchain Architect
 - Achieved record-breaking ID processing time of 4.20 seconds
 
 ## EDUCATION
-
 ### Ph.D. in Theoretical Identity Physics | Honolulu, HI
 #### University of Hawaii | 2020 - Present
 - Research focus: Quantum Superposition of Driver's Licenses
@@ -38,7 +35,6 @@ Quantum Blockchain Architect
 - Thesis: 'Why Nobody Questions Hawaiian Organ Donors'
 
 ## TECHNICAL SKILLS
-
 - ID Photography & Lighting
 - Quantum Computing in Visual Basic
 - Advanced Font Psychology
@@ -48,14 +44,12 @@ Quantum Blockchain Architect
 - Confident Public Speaking (when asked for ID)
 
 ## CERTIFICATIONS
-
 - Certified Hawaiian Organ Donor (2007)
 - Advanced ID Photoshop Specialist
 - Professional Background Actor in Liquor Stores
 - Defensive Driver's License Handling
 
 ## PUBLICATIONS
-
 - 'Why 25 is the Perfect Age' - Journal of Identity Studies
 - 'The Art of Looking Older Than You Are' - Hawaii Tech Review
 - 'FOGLE: A New Framework for ID Verification' - Proceedings of the International Conference on Making It Past Bouncers 

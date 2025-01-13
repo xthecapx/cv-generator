@@ -1,7 +1,8 @@
 import { useForm, useFieldArray } from 'react-hook-form';
-import { CvData } from '@/utils/markdownConverter';
+
 import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
+import { CvData } from '@/utils/cvConverter';
 
 interface CvEditFormProps {
   cvData: CvData;
@@ -72,14 +73,14 @@ export function CvEditForm({ cvData, onSubmit }: CvEditFormProps) {
           </div>
           <div>
             <input
-              {...register('contact.email.text')}
+              {...register('contact.email')}
               placeholder="Email Address"
               className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
             />
           </div>
           <div>
             <input
-              {...register('contact.phone.text')}
+              {...register('contact.phone')}
               placeholder="Phone Number"
               className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
             />

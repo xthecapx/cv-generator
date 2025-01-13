@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
 import { loadDefaultCv } from '@/utils/loadDefaultCv';
-import { jsonToMarkdown, isValidCvData } from '@/utils/markdownConverter';
+import { cvToMarkdown } from '@/utils/cvConverter';
 
 export async function GET() {
   try {
-    const rawData = await loadDefaultCv();
-    if (!isValidCvData(rawData)) {
-      throw new Error('Invalid CV data format');
-    }
-    const markdown = jsonToMarkdown(rawData);
+    const cvData = await loadDefaultCv();
+    const markdown = cvToMarkdown(cvData);
     return new NextResponse(markdown);
   } catch {
     return new NextResponse('Error loading CV', { status: 500 });

@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { FloatingActions } from '@/components/FloatingActions';
 import { Header } from '@/components/Header';
 import { CvSection } from '@/components/CvSection';
-import { markdownToJson, jsonToMarkdown, CvData, isValidCvData, CV_STORAGE_KEY } from '@/utils/markdownConverter';
+import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
 import { CvEditForm } from '@/components/CvEditForm';
+import { CvData } from '@/utils/cvConverter';
+import { CV_STORAGE_KEY, isValidCvData } from '@/utils/markdownConverter';
 
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
@@ -13,24 +15,24 @@ export default function Home() {
 
   useEffect(() => {
     // Try to load from localStorage first
-    const storedData = localStorage.getItem(CV_STORAGE_KEY);
-    if (storedData) {
-      try {
-        const parsedData = JSON.parse(storedData);
-        if (isValidCvData(parsedData)) {
-          setCvData(parsedData);
-          return;
-        }
-      } catch (error) {
-        console.error('Error parsing stored CV:', error);
-      }
-    }
+    // const storedData = localStorage.getItem(CV_STORAGE_KEY);
+    // if (storedData) {
+    //   try {
+    //     const parsedData: CvData = JSON.parse(storedData);
+    //     if (isValidCvData(parsedData)) {
+    //       setCvData(parsedData);
+    //       return;
+    //     }
+    //   } catch (error) {
+    //     console.error('Error parsing stored CV:', error);
+    //   }
+    // }
 
     // Fall back to default CV if no valid stored data
     fetch('/api/default-cv')
       .then(res => res.text())
       .then(markdown => {
-        const jsonData = markdownToJson(markdown);
+        const jsonData = markdownToCv(markdown);
         setCvData(jsonData);
       })
       .catch(error => {
@@ -39,11 +41,11 @@ export default function Home() {
   }, []);
 
   // Save to localStorage whenever cvData changes
-  useEffect(() => {
-    if (cvData) {
-      localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
-    }
-  }, [cvData]);
+  // useEffect(() => {
+  //   if (cvData) {
+  //     localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
+  //   }
+  // }, [cvData]);
 
   const handleClearStorage = () => {
     if (window.confirm('Are you sure you want to reset to the default CV? This will remove all your changes.')) {
@@ -51,7 +53,7 @@ export default function Home() {
       fetch('/api/default-cv')
         .then(res => res.text())
         .then(markdown => {
-          const jsonData = markdownToJson(markdown);
+          const jsonData = markdownToCv(markdown);
           setCvData(jsonData);
         });
     }
@@ -84,24 +86,24 @@ export default function Home() {
 
           if (file.name.toLowerCase().endsWith('.json')) {
             // Handle JSON file
-            const parsedData = JSON.parse(content);
-            console.log('Parsed JSON:', parsedData); // Debug log
+            const parsedData: CvData = JSON.parse(content);
+            console.log('Parsed JSON:', parsedData);
             
             if (!isValidCvData(parsedData)) {
-              console.error('Invalid CV data structure:', parsedData); // Debug log
+              console.error('Invalid CV data structure:', parsedData);
               throw new Error('The JSON file does not match the expected CV format');
             }
             jsonData = parsedData;
           } else if (file.name.toLowerCase().endsWith('.md')) {
             // Handle Markdown file
-            jsonData = markdownToJson(content);
+            jsonData = markdownToCv(content);
           } else {
             throw new Error('Unsupported file format');
           }
 
           setCvData(jsonData);
         } catch (error) {
-          console.error('Error details:', error); // Debug log
+          console.error('Error details:', error);
           alert(`Error loading file: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       };
@@ -110,7 +112,7 @@ export default function Home() {
   };
 
   const handleExportMarkdown = () => {
-    const markdownContent = jsonToMarkdown(cvData);
+    const markdownContent = cvToMarkdown(cvData);
     const blob = new Blob([markdownContent], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -139,11 +141,11 @@ export default function Home() {
             ))}
         </main>
 
-        {isEditMode && (
+        {/* {isEditMode && (
           <div className="w-1/2 bg-gray-100 p-8 overflow-auto h-screen sticky top-0">
             <CvEditForm cvData={cvData} onSubmit={handleFormSubmit} />
           </div>
-        )}
+        )} */}
       </div>
 
       <FloatingActions
