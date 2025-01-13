@@ -14,18 +14,15 @@ export default function Home() {
 
   useEffect(() => {
     // Try to load from localStorage first
-    // const storedData = localStorage.getItem(CV_STORAGE_KEY);
-    // if (storedData) {
-    //   try {
-    //     const parsedData: CvData = JSON.parse(storedData);
-    //     if (isValidCvData(parsedData)) {
-    //       setCvData(parsedData);
-    //       return;
-    //     }
-    //   } catch (error) {
-    //     console.error('Error parsing stored CV:', error);
-    //   }
-    // }
+    const storedData = localStorage.getItem(CV_STORAGE_KEY);
+    if (storedData) {
+      try {
+        const parsedData: CvData = JSON.parse(storedData);
+        setCvData(parsedData);
+      } catch (error) {
+        console.error('Error parsing stored CV:', error);
+      }
+    }
 
     // Fall back to default CV if no valid stored data
     fetch('/api/default-cv')
@@ -40,11 +37,11 @@ export default function Home() {
   }, []);
 
   // Save to localStorage whenever cvData changes
-  // useEffect(() => {
-  //   if (cvData) {
-  //     localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
-  //   }
-  // }, [cvData]);
+  useEffect(() => {
+    if (cvData) {
+      localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
+    }
+  }, [cvData]);
 
   const handleClearStorage = () => {
     if (window.confirm('Are you sure you want to reset to the default CV? This will remove all your changes.')) {
