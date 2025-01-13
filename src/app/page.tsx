@@ -20,7 +20,6 @@ const MDEditor = dynamic(
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [markdown, setMarkdown] = useState('');
   const [localMarkdown, setLocalMarkdown] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
 
@@ -76,7 +75,6 @@ export default function Home() {
     if (cvData) {
       const md = cvToMarkdown(cvData);
       setLocalMarkdown(md);
-      setMarkdown(md);
     }
   }, [cvData]);
 
@@ -85,7 +83,6 @@ export default function Home() {
       try {
         const newCvData = markdownToCv(value);
         setCvData(newCvData);
-        setMarkdown(value);
         setShowSnackbar(true);
       } catch (error) {
         console.error('Error parsing markdown:', error);
