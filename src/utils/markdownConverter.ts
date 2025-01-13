@@ -57,7 +57,11 @@ type Section = CvData['sections'][0];
 type Item = CvItem;
 
 export function markdownToJson(markdown: string): CvData {
-  const lines = markdown.split('\n').filter(line => line.trim());
+  const lines = markdown
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+
   const cvData: CvData = {
     contact: {
       name: '',

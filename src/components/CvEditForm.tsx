@@ -144,8 +144,15 @@ export function CvEditForm({ cvData, onSubmit }: CvEditFormProps) {
                 {section.items?.map((_, itemIndex) => (
                   <div 
                     key={`${section.id}-item-${itemIndex}`}
-                    className="pt-4 border-t border-gray-100"
+                    className="relative"
                   >
+                    {itemIndex > 0 && (
+                      <div className="my-6 border-t border-gray-200 relative">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-2 text-xs text-gray-400">
+                          Item {itemIndex + 1}
+                        </div>
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-6">
                       <input
                         {...register(`sections.${sectionIndex}.items.${itemIndex}.primary`)}

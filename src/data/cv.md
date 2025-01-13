@@ -105,15 +105,3 @@ Software Developer
 ### Bachelor's Degree in Electronic Engineering | Bogota, CO
 #### Universidad Nacional de Colombia | 2006 - 2011
 - Opted for Master's degree as graduation path
-
-## RESEARCH & PUBLICATIONS
-- Optimization of a Fuzzy System for Automatic Detection of Planetary Transits | 2022
-  - Published in Ciencia en Desarrollo, Vol. 1 Núm. 2E
-  - DOI: 10.19053/01217488.v1.n2E.2022.15136
-- Mathematical Models for Curriculum Management | 2022
-  - Book chapter published in Repository of Faculty of Engineering
-
-## CERTIFICATIONS
-- Duolingo English Test (Score: 110/160)
-- IBM Data Science Specialization
-- Google IT Automation with Python Specialization 
