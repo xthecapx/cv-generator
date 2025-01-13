@@ -40,7 +40,6 @@ export function CvEditForm({ cvData, onSubmit }: CvEditFormProps) {
     []
   );
 
-  // Watch for form changes
   watch((data) => {
     if (data) {
       processAndSubmitData(data as CvData);
@@ -48,44 +47,53 @@ export function CvEditForm({ cvData, onSubmit }: CvEditFormProps) {
   });
 
   return (
-    <form className="space-y-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Contact Information</h3>
-        <div className="grid grid-cols-2 gap-4">
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Contact Information */}
+      <div className="mb-8">
+        <div className="flex items-center mb-6">
+          <h2 className="text-xl font-medium text-gray-900">Contact Information</h2>
+          <div className="flex-grow border-b ml-4 border-gray-200" />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium">Name</label>
             <input
               {...register('contact.name')}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+              placeholder="Full Name"
+              className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Title</label>
             <input
               {...register('contact.title')}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+              placeholder="Professional Title"
+              className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Email</label>
             <input
               {...register('contact.email.text')}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+              placeholder="Email Address"
+              className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Phone</label>
             <input
               {...register('contact.phone.text')}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+              placeholder="Phone Number"
+              className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
             />
           </div>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Sections</h3>
+      {/* Sections */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center flex-grow">
+            <h2 className="text-xl font-medium text-gray-900">Sections</h2>
+            <div className="flex-grow border-b ml-4 border-gray-200" />
+          </div>
           <button
             type="button"
             onClick={() => appendSection({ 
@@ -93,91 +101,91 @@ export function CvEditForm({ cvData, onSubmit }: CvEditFormProps) {
               isVisible: true, 
               items: [{ details: [] }] 
             })}
-            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
+            className="ml-4 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-full text-sm font-medium transition-colors"
           >
-            Add Section
+            + Add Section
           </button>
         </div>
 
-        {sections.map((section, sectionIndex) => (
-          <div key={section.id} className="border rounded p-4 relative">
-            <button
-              type="button"
-              onClick={() => removeSection(sectionIndex)}
-              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+        <div className="space-y-6">
+          {sections.map((section, sectionIndex) => (
+            <div 
+              key={section.id} 
+              className="p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
             >
-              ×
-            </button>
-
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Section Title</label>
+              <div className="flex items-center justify-between mb-4">
                 <input
                   {...register(`sections.${sectionIndex}.title`)}
-                  className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                  placeholder="Section Title"
+                  className="text-lg font-medium w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                 />
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm text-gray-600">
+                    <input
+                      type="checkbox"
+                      {...register(`sections.${sectionIndex}.isVisible`)}
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    Visible
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => removeSection(sectionIndex)}
+                    className="text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  {...register(`sections.${sectionIndex}.isVisible`)}
-                  className="rounded border-gray-300"
-                />
-                <label className="ml-2 text-sm">Visible</label>
-              </div>
-            </div>
 
-            <div className="mt-4 space-y-4">
-              {section.items?.map((_, itemIndex) => (
-                <div key={`${section.id}-item-${itemIndex}`} className="border-t pt-4 relative">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium">Primary</label>
+              <div className="space-y-6">
+                {section.items?.map((_, itemIndex) => (
+                  <div 
+                    key={`${section.id}-item-${itemIndex}`}
+                    className="pt-4 border-t border-gray-100"
+                  >
+                    <div className="grid grid-cols-2 gap-6">
                       <input
                         {...register(`sections.${sectionIndex}.items.${itemIndex}.primary`)}
-                        className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                        placeholder="Primary Text"
+                        className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium">Primary Right</label>
                       <input
                         {...register(`sections.${sectionIndex}.items.${itemIndex}.primaryRight`)}
-                        className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                        placeholder="Primary Right"
+                        className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium">Secondary</label>
                       <input
                         {...register(`sections.${sectionIndex}.items.${itemIndex}.secondary`)}
-                        className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                        placeholder="Secondary Text"
+                        className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium">Secondary Right</label>
                       <input
                         {...register(`sections.${sectionIndex}.items.${itemIndex}.secondaryRight`)}
-                        className="mt-1 block w-full rounded border-gray-300 shadow-sm"
+                        placeholder="Secondary Right"
+                        className="w-full px-3 py-2 border-b border-gray-300 focus:border-blue-500 focus:outline-none transition-colors"
                       />
-                    </div>
-                    <div className="col-span-2">
-                      <label className="block text-sm font-medium">Details</label>
-                      <textarea
-                        {...register(`sections.${sectionIndex}.items.${itemIndex}.details`)}
-                        className="mt-1 block w-full rounded border-gray-300 shadow-sm"
-                        rows={3}
-                        placeholder="Enter details separated by newlines"
-                        defaultValue={Array.isArray(section.items[itemIndex]?.details) 
-                          ? section.items[itemIndex].details.join('\n') 
-                          : ''}
-                      />
+                      <div className="col-span-2">
+                        <textarea
+                          {...register(`sections.${sectionIndex}.items.${itemIndex}.details`)}
+                          placeholder="Enter details (one per line)"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors"
+                          rows={3}
+                          defaultValue={Array.isArray(section.items[itemIndex]?.details) 
+                            ? section.items[itemIndex].details.join('\n') 
+                            : ''}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </form>
+    </div>
   );
 } 
