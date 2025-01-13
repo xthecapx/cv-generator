@@ -1,16 +1,28 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FloatingActions } from '@/components/FloatingActions';
 import { Header } from '@/components/Header';
 import { CvSection } from '@/components/CvSection';
 import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
-import { CvEditForm } from '@/components/CvEditForm';
 import { CvData, CV_STORAGE_KEY } from '@/utils/cvConverter';
+import dynamic from 'next/dynamic';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+import debounce from 'lodash/debounce';
+import { Snackbar } from '@/components/Snackbar';
+
+const MDEditor = dynamic(
+  () => import('@uiw/react-md-editor'),
+  { ssr: false }
+);
 
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [markdown, setMarkdown] = useState('');
+  const [localMarkdown, setLocalMarkdown] = useState('');
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   useEffect(() => {
     // Try to load from localStorage first
@@ -19,6 +31,7 @@ export default function Home() {
       try {
         const parsedData: CvData = JSON.parse(storedData);
         setCvData(parsedData);
+        return;
       } catch (error) {
         console.error('Error parsing stored CV:', error);
       }
@@ -57,6 +70,35 @@ export default function Home() {
 
   const handleToggleEditMode = () => {
     setIsEditMode(!isEditMode);
+  };
+
+  useEffect(() => {
+    if (cvData) {
+      const md = cvToMarkdown(cvData);
+      setLocalMarkdown(md);
+      setMarkdown(md);
+    }
+  }, [cvData]);
+
+  const debouncedUpdateCv = useCallback(
+    debounce((value: string) => {
+      try {
+        const newCvData = markdownToCv(value);
+        setCvData(newCvData);
+        setMarkdown(value);
+        setShowSnackbar(true);
+      } catch (error) {
+        console.error('Error parsing markdown:', error);
+      }
+    }, 2000),
+    []
+  );
+
+  const handleMarkdownChange = (newValue?: string) => {
+    if (newValue !== undefined) {
+      setLocalMarkdown(newValue);
+      debouncedUpdateCv(newValue);
+    }
   };
 
   if (!cvData) {
@@ -127,11 +169,17 @@ export default function Home() {
             ))}
         </main>
 
-        {/* {isEditMode && (
-          <div className="w-1/2 bg-gray-100 p-8 overflow-auto h-screen sticky top-0">
-            <CvEditForm cvData={cvData} onSubmit={handleFormSubmit} />
+        {isEditMode && (
+          <div data-color-mode="light" className="w-1/2 bg-gray-100 p-8 overflow-auto h-screen sticky top-0">
+            <MDEditor
+              value={localMarkdown}
+              onChange={handleMarkdownChange}
+              height="100%"
+              preview="edit"
+              hideToolbar
+            />
           </div>
-        )} */}
+        )}
       </div>
 
       <FloatingActions
@@ -141,6 +189,12 @@ export default function Home() {
         onClearStorage={handleClearStorage}
         onToggleEditMode={handleToggleEditMode}
         isEditMode={isEditMode}
+      />
+
+      <Snackbar 
+        message="CV updated successfully"
+        isVisible={showSnackbar}
+        onHide={() => setShowSnackbar(false)}
       />
 
       <style jsx global>{`

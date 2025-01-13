@@ -9,11 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@uiw/react-md-editor": "^4.0.5",
     "lodash": "^4.17.21",
     "next": "15.1.4",
+    "next-remove-imports": "^1.0.12",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-hook-form": "^7.54.2"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
