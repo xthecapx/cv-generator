@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.1.6",
     "@uiw/react-md-editor": "^4.0.5",
     "lodash": "^4.17.21",
     "next": "15.1.4",

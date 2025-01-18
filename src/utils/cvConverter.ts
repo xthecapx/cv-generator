@@ -3,12 +3,11 @@ export interface ContactInfo {
   title: string;
   phone: string;
   email: string;
-  links: {
-    [key: string]: {
-        text: string;
-        url: string;
-    };
-  };
+  location: string;
+  links: Array<{
+    text: string;
+    url: string;
+  }>;
 }
 
 export interface CvItem {
@@ -39,7 +38,8 @@ export function markdownToCv(markdown: string): CvData {
       title: '',
       phone: '',
       email: '',
-      links: {}
+      location: '',
+      links: []
     },
     sections: []
   };
@@ -62,13 +62,15 @@ export function markdownToCv(markdown: string): CvData {
           cv.contact.title = value;
         } else if (key.toLowerCase() === 'phone') {
           cv.contact.phone = value;
+        } else if (key.toLowerCase() === 'location') {
+          cv.contact.location = value;
         } else if (key.toLowerCase() === 'email') {
           cv.contact.email = value;
         } else if (['linkedin', 'github'].includes(key.toLowerCase())) {
-          cv.contact.links[key.toLowerCase()] = {
-            text: value,
+          cv.contact.links.push({
+            text: key,
             url: value
-          };
+          });
         }
       }
       continue;
@@ -142,11 +144,12 @@ export function cvToMarkdown(cv: CvData): string {
   // Contact section
   markdown += `# ${cv.contact.name}\n`;
   markdown += `- title: ${cv.contact.title}\n`;
+  markdown += `- Location: ${cv.contact.location}\n`;
   markdown += `- Phone: ${cv.contact.phone}\n`;
   markdown += `- Email: ${cv.contact.email}\n`;
   
-  Object.entries(cv.contact.links).forEach(([key, value]) => {
-    markdown += `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value.url}\n`;
+  cv.contact.links.forEach(link => {
+    markdown += `- ${link.text}: ${link.url}\n`;
   });
 
   markdown += '\n';

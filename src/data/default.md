@@ -2,6 +2,7 @@
 - title: Quantum Blockchain Architect
 - Phone: +1 (808) 555-0111
 - Email: mclovin@hawaii.gov
+- Location: Honolulu, HI
 - LinkedIn: linkedin.com/in/mclovin-hawaii
 - GitHub: github.com/thereal-mclovin
 
@@ -41,7 +42,6 @@
 - Blockchain ID Verification
 - Time Travel Debugging
 - Meme-Driven Development (MDD)
-- Confident Public Speaking (when asked for ID)
 
 ## CERTIFICATIONS
 - Certified Hawaiian Organ Donor (2007)

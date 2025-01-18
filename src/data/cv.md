@@ -2,6 +2,7 @@
 - title: Software Developer
 - Phone: +57 301 4915565
 - Email: ing.cristian.marquez@gmail.com
+- Location: Colombia, Santander
 - LinkedIn: linkedin.com/in/thecap-developer
 - GitHub: github.com/xthecapx
 

@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import { FloatingActions } from '@/components/FloatingActions';
-import { Header } from '@/components/Header';
-import { CvSection } from '@/components/CvSection';
 import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
 import { CvData, CV_STORAGE_KEY } from '@/utils/cvConverter';
 import dynamic from 'next/dynamic';
@@ -11,11 +9,98 @@ import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import debounce from 'lodash/debounce';
 import { Snackbar } from '@/components/Snackbar';
+import { PDFViewer, Document, Page, StyleSheet, View, Text, Link } from '@react-pdf/renderer';
+import { CvSection } from '@/components/CvSection';
 
 const MDEditor = dynamic(
   () => import('@uiw/react-md-editor'),
   { ssr: false }
 );
+
+// Create styles
+const styles = StyleSheet.create({
+  page: {
+    padding: 32, // reduced from 48
+    fontFamily: 'Helvetica',
+    fontSize: 12,
+  },
+  viewer: {
+    width: '100%',
+    height: '100vh',
+  },
+  header: {
+    marginBottom: 16, // reduced from 32
+    textAlign: 'center',
+  },
+  name: {
+    fontSize: 24,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 4, // reduced from 8
+  },
+  title: {
+    fontSize: 18,
+    marginBottom: 8, // reduced from 16
+    color: '#333333',
+    fontFamily: 'Helvetica',
+  },
+  contactRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 2, // reduced from 4
+    fontSize: 10,
+  },
+  contactText: {
+    color: '#333333',
+    fontSize: 10,
+    fontFamily: 'Helvetica',
+  },
+  bullet: {
+    color: '#333333',
+    paddingHorizontal: 2, // reduced from 4
+    fontSize: 10,
+  },
+});
+
+// Create Document Component
+const CvDocument = ({ cvData }: { cvData: CvData }) => {
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <View style={styles.header}>
+          <Text style={styles.name}>{cvData.contact.name}</Text>
+          <Text style={styles.title}>{cvData.contact.title}</Text>
+          <View style={styles.contactRow}>
+            <Text>Phone: </Text>
+            <Link src={`tel:${cvData.contact.phone}`} style={styles.contactText}>
+              {cvData.contact.phone}
+            </Link>
+            <Text style={styles.bullet}>•</Text>
+            <Text>Email: </Text>
+            <Link src={`mailto:${cvData.contact.email}`} style={styles.contactText}>
+              {cvData.contact.email}
+            </Link>
+          </View>
+          <View style={styles.contactRow}>
+            {cvData.contact.links.map((link, index) => (
+              <Fragment key={index}>
+                {index > 0 && <Text style={styles.bullet}>•</Text>}
+                <Text>{`${link.text}: `}</Text>
+                <Link src={`https://${link.url}`} style={styles.contactText}>
+                  {link.url}
+                </Link>
+              </Fragment>
+            ))}
+          </View>
+        </View>
+        {cvData.sections.map((section, index) => (
+          <CvSection key={index} section={section} />
+        ))}
+      </Page>
+    </Document>
+  );
+};
 
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | null>(null);
@@ -151,19 +236,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-gray-800">
+    <div className="min-h-screen bg-black">
       <div className="flex">
-        <main className={`mx-auto leading-relaxed p-8 bg-white ${
-          isEditMode 
-            ? 'w-1/2 shadow-2xl relative z-10' 
-            : 'max-w-[8.5in]'
-        }`}>
-          <Header contact={cvData.contact} />
-          
-          {cvData.sections
-            .map((section, index) => (
-              <CvSection key={index} section={section} />
-            ))}
+        <main className={isEditMode ? 'w-1/2' : 'w-full'}>
+          <PDFViewer style={styles.viewer}>
+            <CvDocument cvData={cvData} />
+          </PDFViewer>
         </main>
 
         {isEditMode && (
@@ -193,30 +271,6 @@ export default function Home() {
         isVisible={showSnackbar}
         onHide={() => setShowSnackbar(false)}
       />
-
-      <style jsx global>{`
-        @media print {
-          .fixed {
-            display: none !important;
-          }
-          #__next_route_announcer__ {
-            display: none !important;
-          }
-          @page {
-            margin: 2cm;
-            size: A4 portrait;
-          }
-          body {
-            print-color-adjust: exact;
-            -webkit-print-color-adjust: exact;
-          }
-          [data-floating-ui-portal],
-          [role="tooltip"],
-          [class*="floating"] {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
