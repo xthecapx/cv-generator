@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { markdownToCv } from './cvConverter';
+import { CvData, markdownToCv } from './cvConverter';
 
-export function loadDefaultCv() {
+export function loadDefaultCv(): CvData {
   try {
     const markdownPath = path.join(process.cwd(), 'src/data/default.md');
     const markdownContent = fs.readFileSync(markdownPath, 'utf-8');
@@ -15,10 +15,11 @@ export function loadDefaultCv() {
         title: '',
         phone: '',
         email: '',
-        links: {
-          linkedin: { text: '', url: '' },
-          github: { text: '', url: '' }
-        }
+        location: '',
+        links: [ 
+          { text: 'linkedin', url: '' },
+          { text: 'github', url: '' }
+        ]
       },
       sections: []
     };
