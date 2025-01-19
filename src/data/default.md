@@ -1,3 +1,12 @@
+---
+title: Title property
+year: 2025
+favorite: true
+tags:
+  - CV
+  - Curriculum Vitae
+  - Resume
+---
 # McLOVIN
 - title: Quantum Blockchain Architect
 - Phone: +1 (808) 555-0111
@@ -43,7 +52,7 @@
 - Time Travel Debugging
 - Meme-Driven Development (MDD)
 
-## CERTIFICATIONS
+## CERTIFICATIONS \break
 - Certified Hawaiian Organ Donor (2007)
 - Advanced ID Photoshop Specialist
 - Professional Background Actor in Liquor Stores

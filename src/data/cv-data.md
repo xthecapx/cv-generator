@@ -1,3 +1,13 @@
+---
+title: Title property
+year: 2025
+favorite: true
+tags:
+  - CV
+  - Curriculum Vitae
+  - Resume
+---
+
 # McLOVIN
 - title: Quantum Blockchain Architect
 - Location: Honolulu, HI
