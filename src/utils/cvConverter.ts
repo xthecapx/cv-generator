@@ -138,7 +138,9 @@ export function markdownToCv(markdown: string): CvData {
   return cv;
 }
 
-export function cvToMarkdown(cv: CvData): string {
+export function cvToMarkdown(cv?: CvData): string {
+  if (!cv) return '';
+
   let markdown = '';
 
   // Contact section

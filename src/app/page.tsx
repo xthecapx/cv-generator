@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useState, useEffect, useCallback, Fragment, memo } from 'react';
 import { FloatingActions } from '@/components/FloatingActions';
 import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
 import { CvData, CV_STORAGE_KEY } from '@/utils/cvConverter';
@@ -9,7 +9,7 @@ import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import debounce from 'lodash/debounce';
 import { Snackbar } from '@/components/Snackbar';
-import { PDFViewer, Document, Page, StyleSheet, View, Text, Link } from '@react-pdf/renderer';
+import { PDFViewer, Document, Page, StyleSheet, View, Text, Link, PDFViewerProps } from '@react-pdf/renderer';
 import { CvSection } from '@/components/CvSection';
 
 const MDEditor = dynamic(
@@ -102,14 +102,29 @@ const CvDocument = ({ cvData }: { cvData: CvData }) => {
   );
 };
 
+const MemoizedPDFViewer = memo(
+  ({ cvData, style }: { cvData: CvData; style: PDFViewerProps['style']  }) => {
+    return (
+      <PDFViewer style={style}>
+        <CvDocument cvData={cvData} />
+      </PDFViewer>
+    );
+  },
+  (prevProps, nextProps) => {
+    return JSON.stringify(prevProps.cvData) === JSON.stringify(nextProps.cvData);
+  }
+);
+
+MemoizedPDFViewer.displayName = 'MemoizedPDFViewer';
+
 export default function Home() {
-  const [cvData, setCvData] = useState<CvData | null>(null);
+  const [cvData, setCvData] = useState<CvData | undefined>(undefined);
   const [isEditMode, setIsEditMode] = useState(false);
   const [localMarkdown, setLocalMarkdown] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    // Try to load from localStorage first
     const storedData = localStorage.getItem(CV_STORAGE_KEY);
     if (storedData) {
       try {
@@ -121,19 +136,17 @@ export default function Home() {
       }
     }
 
-    // Fall back to default CV if no valid stored data
     fetch('/api/default-cv')
       .then(res => res.text())
       .then(markdown => {
-        const jsonData = markdownToCv(markdown);
-        setCvData(jsonData);
+        const cv = markdownToCv(markdown);
+        setCvData(cv);
       })
       .catch(error => {
         console.error('Error loading default CV:', error);
       });
   }, []);
 
-  // Save to localStorage whenever cvData changes
   useEffect(() => {
     if (cvData) {
       localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
@@ -146,35 +159,37 @@ export default function Home() {
       fetch('/api/default-cv')
         .then(res => res.text())
         .then(markdown => {
-          const jsonData = markdownToCv(markdown);
-          setCvData(jsonData);
+          updateCv(markdown);
         });
     }
   };
 
   const handleToggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  useEffect(() => {
-    if (cvData) {
+    if (!isEditMode &&cvData) {
       const md = cvToMarkdown(cvData);
       setLocalMarkdown(md);
     }
-  }, [cvData]);
 
-  const debouncedUpdateCv = useCallback(
-    debounce((value: string) => {
-      try {
-        const newCvData = markdownToCv(value);
-        setCvData(newCvData);
+    setIsEditMode(!isEditMode);
+
+  };
+
+  const updateCv = (value: string) => {
+    try {
+      setIsUpdating(true);
+      const newCvData = markdownToCv(value);
+      setCvData(newCvData);
+      setTimeout(() => {
+        setIsUpdating(false); 
         setShowSnackbar(true);
-      } catch (error) {
-        console.error('Error parsing markdown:', error);
-      }
-    }, 2000),
-    []
-  );
+      }, 500);
+    } catch (error) {
+      console.error('Error parsing markdown:', error);
+      setIsUpdating(false);
+    }
+  }
+
+  const debouncedUpdateCv = useCallback(debounce(updateCv, 2000), []);
 
   const handleMarkdownChange = (newValue?: string) => {
     if (newValue !== undefined) {
@@ -187,10 +202,6 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -198,21 +209,12 @@ export default function Home() {
       reader.onload = (e) => {
         try {
           const content = e.target?.result as string;
-          let jsonData: CvData;
 
-          if (file.name.toLowerCase().endsWith('.json')) {
-            // Handle JSON file
-            const parsedData: CvData = JSON.parse(content);
-            console.log('Parsed JSON:', parsedData);
-            jsonData = parsedData;
-          } else if (file.name.toLowerCase().endsWith('.md')) {
-            // Handle Markdown file
-            jsonData = markdownToCv(content);
+          if (file.name.toLowerCase().endsWith('.md')) {
+            updateCv(content);
           } else {
             throw new Error('Unsupported file format');
           }
-
-          setCvData(jsonData);
         } catch (error) {
           console.error('Error details:', error);
           alert(`Error loading file: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -239,9 +241,13 @@ export default function Home() {
     <div className="min-h-screen bg-black">
       <div className="flex">
         <main className={isEditMode ? 'w-1/2' : 'w-full'}>
-          <PDFViewer style={styles.viewer}>
-            <CvDocument cvData={cvData} />
-          </PDFViewer>
+          {!isUpdating ? (
+            <MemoizedPDFViewer cvData={cvData} style={styles.viewer} />
+          ) : (
+            <div className="w-full h-screen flex items-center justify-center text-white">
+              Updating PDF...
+            </div>
+          )}
         </main>
 
         {isEditMode && (
@@ -258,7 +264,6 @@ export default function Home() {
       </div>
 
       <FloatingActions
-        onPrint={handlePrint}
         onFileUpload={handleFileUpload}
         onExportMarkdown={handleExportMarkdown}
         onClearStorage={handleClearStorage}
