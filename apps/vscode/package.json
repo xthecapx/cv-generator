@@ -1,0 +1,34 @@
+{
+  "name": "@thecap-cv/vscode",
+  "displayName": "TheCap CV Generator",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "vscode": "^1.86.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:thecap-cv.generateCV"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.86.0",
+    "@types/node": "^20",
+    "typescript": "^5",
+    "eslint": "^9",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4",
+    "ts-loader": "^9.5.1"
+  }
+} 
