@@ -21,6 +21,7 @@ export interface CvItem {
 export interface CvSection {
   title: string;
   items: CvItem[];
+  break?: boolean;
 }
 
 export interface CvData {
@@ -79,13 +80,14 @@ export function markdownToCv(markdown: string): CvData {
     // Parse sections
     if (line.startsWith('## ')) {
       if (currentSection) {
-        // Add current section to CV
         cv.sections.push(currentSection);
       }
-      // Create new section and reset current item
+      
+      const title = line.replace('## ', '');
       currentSection = {
-        title: line.replace('## ', ''),
-        items: []
+        title: title.replace('\\break', '').trim(),
+        items: [],
+        break: title.includes('\\break')
       };
       currentItem = null;
       continue;
@@ -158,7 +160,7 @@ export function cvToMarkdown(cv?: CvData): string {
 
   // Other sections
   cv.sections.forEach(section => {
-    markdown += `## ${section.title}\n`;
+    markdown += `## ${section.title}${section.break ? ' \\break' : ''}\n`;
     
     section.items.forEach(item => {
       // Only add subsection headers if they have content

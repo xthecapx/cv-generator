@@ -53,7 +53,7 @@ interface CvSectionProps {
 
 export function CvSection({ section }: CvSectionProps) {
   return (
-    <View style={styles.section}>
+    <View style={styles.section} break={section.break}>
       <Text style={styles.sectionTitle}>{section.title}</Text>
       
       {section.items.map((item, itemIndex) => (
