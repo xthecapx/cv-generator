@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
-import { CvData } from '@/utils/cvConverter';
+import { CvSection as CvSectionType } from '@/utils/cvConverter';
 
 const styles = StyleSheet.create({
   section: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 });
 
 interface CvSectionProps {
-  section: CvData['sections'][0];
+  section: CvSectionType;
 }
 
 export function CvSection({ section }: CvSectionProps) {
