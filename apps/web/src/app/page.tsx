@@ -5,7 +5,7 @@ import { FloatingActions } from '@/components/FloatingActions';
 import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
 import { CvData, CV_STORAGE_KEY } from '@/utils/cvConverter';
 import dynamic from 'next/dynamic';
-// import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-md-editor/markdown-editor.css';
 // import '@uiw/react-markdown-preview/markdown.css';
 import debounce from 'lodash/debounce';
 import { Snackbar } from '@/components/Snackbar';
