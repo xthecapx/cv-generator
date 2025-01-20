@@ -1,11 +1,10 @@
 import * as React from 'react';
 
-import { useState, useEffect, useCallback, Fragment, memo } from 'react';
+import { Fragment } from 'react';
 
-import { PDFViewer, Document, Page, StyleSheet, View, Text, Link, PDFViewerProps } from '@react-pdf/renderer';
+import { PDFViewer, Document, Page, StyleSheet, View, Text, Link } from '@react-pdf/renderer';
 import { CvSection } from 'CvSection';
 import { CvData, markdownToCv } from 'cvConverter';
-
 
 // Create styles
 const styles = StyleSheet.create({
@@ -102,12 +101,9 @@ export const ReactView: React.FC<ReactViewProps> = ({ markdown }) => {
 
   return (
       <div className="react-view-container">
-          <h2>Current File Content</h2>
-          <div className="markdown-content">
-            <PDFViewer style={styles.viewer}>
-              <CvDocument cvData={cvData} />
-            </PDFViewer>
-          </div>
+        <PDFViewer style={styles.viewer}>
+          <CvDocument cvData={cvData} />
+        </PDFViewer>
       </div>
   );
 };
