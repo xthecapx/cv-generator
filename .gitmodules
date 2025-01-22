@@ -1,0 +1,4 @@
+[submodule "apps/obsidian"]
+	path = apps/obsidian
+	url = ../thecap-cv-generator.git
+	branch = main
