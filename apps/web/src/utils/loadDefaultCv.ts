@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { CvData, markdownToCv } from './cvConverter';
+import { CvData, markdownToCv } from '@thecap-cv/components';
 
 export function loadDefaultCv(): CvData {
   try {

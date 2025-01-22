@@ -136,8 +136,15 @@ To force a page break before a section, add \break to the section title:
 
 For a complete example, check [apps/web/src/data/default.md](apps/web/src/data/default.md).
 
+## License
 
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0) - see the [LICENSE](LICENSE) file for details.
 
-
-
-
+What this means:
+- ✔️ You can use this software for commercial purposes
+- ✔️ You can modify the source code
+- ✔️ You can distribute modified versions
+- ❗ You must keep the source code open source
+- ❗ You must state changes made to the code
+- ❗ You must disclose your source code
+- ❗ You must use the same license (GPL-3.0)

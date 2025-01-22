@@ -1,4 +1,4 @@
-import { CvData, CvItem, CvProperties, CvSection } from "../types";
+import { ContactInfo, CvData, CvItem, CvProperties, CvSection } from "../types";
 
 
 export const CV_STORAGE_KEY = 'cvData';
@@ -198,4 +198,45 @@ export function cvToMarkdown(cv?: CvData): string {
   });
 
   return markdown.trim();
+} 
+
+export function validateCvMarkdown(markdown: string): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  const { content } = parseYamlFrontmatter(markdown);
+  
+  // Validate that content starts with a level 1 heading (#)
+  const firstNonEmptyLine = content.split('\n').find(line => line.trim());
+  if (!firstNonEmptyLine?.startsWith('# ')) {
+    errors.push('CV must start with a level 1 heading (#) containing the name');
+  }
+
+  const cv = markdownToCv(markdown);
+
+  // Validate contact information
+  const requiredContactFields: (keyof ContactInfo)[] = ['name', 'title', 'email'];
+  requiredContactFields.forEach(field => {
+    if (!cv.contact[field]) {
+      errors.push(`Missing required contact field: ${field}`);
+    }
+  });
+
+  // Validate sections
+  if (!cv.sections.length) {
+    errors.push('CV must have at least one section');
+  }
+
+  // Validate each section has a title and at least one item
+  cv.sections.forEach((section, index) => {
+    if (!section.title) {
+      errors.push(`Section ${index + 1} is missing a title`);
+    }
+    if (!section.items.length) {
+      errors.push(`Section "${section.title || index + 1}" must have at least one item`);
+    }
+  });
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 } 

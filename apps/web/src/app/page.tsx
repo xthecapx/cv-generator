@@ -2,15 +2,13 @@
 
 import { useState, useEffect, useCallback, memo } from 'react';
 import { FloatingActions } from '@/components/FloatingActions';
-import { markdownToCv, cvToMarkdown } from '@/utils/cvConverter';
-import { CvData, CV_STORAGE_KEY } from '@/utils/cvConverter';
 import dynamic from 'next/dynamic';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import debounce from 'lodash/debounce';
 import { Snackbar } from '@/components/Snackbar';
 import { PDFViewer, PDFViewerProps } from '@react-pdf/renderer';
-import { CvDocument, documentStyles } from '@thecap-cv/components';
+import { CvDocument, documentStyles, markdownToCv, cvToMarkdown, CvData, CV_STORAGE_KEY } from '@thecap-cv/components';
 
 const MDEditor = dynamic(
   () => import('@uiw/react-md-editor'),
@@ -156,7 +154,7 @@ export default function Home() {
     <div className="min-h-screen bg-black">
       <div className="flex">
         <main className={isEditMode ? 'w-1/2' : 'w-full'}>
-          {!isUpdating ? (
+          {!isUpdating && typeof window !== 'undefined' ? (
             <MemoizedPDFViewer cvData={cvData} style={documentStyles.viewer} />
           ) : (
             <div className="w-full h-screen flex items-center justify-center text-white">

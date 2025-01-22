@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { loadDefaultCv } from '@/utils/loadDefaultCv';
-import { cvToMarkdown } from '@/utils/cvConverter';
+import { cvToMarkdown } from '@thecap-cv/components';
 
 export async function GET() {
   try {
