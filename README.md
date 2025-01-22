@@ -5,10 +5,10 @@ A monorepo containing multiple applications for CV generation using a common mar
 ## Project Structure 
 
 ├── apps/
-│ ├── components/ # Shared React components for CV rendering
-│ ├── web/ # Web application (Next.js)
-│ ├── obsidian/ # Obsidian plugin
-│ └── vscode/ # VSCode extension (coming soon)
+│   ├── components/ # Shared React components for CV rendering
+│   ├── web/       # Web application (Next.js)
+│   ├── obsidian/  # Obsidian plugin
+│   └── vscode/    # VSCode extension (coming soon)
 
 ## Applications
 
