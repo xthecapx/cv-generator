@@ -3,12 +3,12 @@
 A monorepo containing multiple applications for CV generation using a common markdown format. This project allows you to manage your CV in markdown and generate beautiful PDFs across different platforms.
 
 ## Project Structure 
-
-├── apps/
-│   ├── components/ # Shared React components for CV rendering
-│   ├── web/       # Web application (Next.js)
-│   ├── obsidian/  # Obsidian plugin
-│   └── vscode/    # VSCode extension (coming soon)
+    .
+    ├── apps/
+    │   ├── components/ # Shared React components for CV rendering
+    │   ├── web/       # Web application (Next.js)
+    │   ├── obsidian/  # Obsidian plugin
+    │   └── vscode/    # VSCode extension (coming soon)
 
 ## Applications
 
