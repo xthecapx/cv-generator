@@ -6,8 +6,9 @@
     "dev:obsidian": "pnpm --filter @thecap-cv/obsidian dev",
     "dev:vscode": "pnpm --filter @thecap-cv/vscode watch",
     "build": "pnpm --filter './apps/**' build",
-    "build:web": "pnpm --filter @thecap-cv/web build",
-    "build:obsidian": "pnpm --filter @thecap-cv/obsidian build",
+    "build:web": "pnpm build:components && pnpm --filter @thecap-cv/web build",
+    "build:obsidian": "pnpm build:components && pnpm --filter @thecap-cv/obsidian build",
+    "build:components": "pnpm --filter @thecap-cv/components build",
     "lint:web": "pnpm --filter @thecap-cv/web lint",
     "lint": "pnpm --filter './apps/**' lint"
   },
@@ -15,5 +16,9 @@
     "node": ">=10",
     "pnpm": ">=9"
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@9.15.4",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 } 

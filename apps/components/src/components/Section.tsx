@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
-import { CvSection as CvSectionType } from '@/utils/cvConverter';
+import { CvSection as CvSectionType } from '@/types';
 
-const styles = StyleSheet.create({
+export const sectionStyles = StyleSheet.create({
   section: {
     marginBottom: 8,
   },
@@ -51,33 +51,33 @@ interface CvSectionProps {
   section: CvSectionType;
 }
 
-export function CvSection({ section }: CvSectionProps) {
+export function Section({ section }: CvSectionProps) {
   return (
-    <View style={styles.section} break={section.break}>
-      <Text style={styles.sectionTitle}>{section.title}</Text>
+    <View style={sectionStyles.section} break={section.break}>
+      <Text style={sectionStyles.sectionTitle}>{section.title}</Text>
       
       {section.items.map((item, itemIndex) => (
-        <View key={itemIndex} style={styles.itemContainer}>
+        <View key={itemIndex} style={sectionStyles.itemContainer}>
           {(item.primary || item.primaryRight) && (
-            <View style={styles.headerRow}>
-              <Text style={styles.primaryText}>{item.primary}</Text>
+            <View style={sectionStyles.headerRow}>
+              <Text style={sectionStyles.primaryText}>{item.primary}</Text>
               <Text>{item.primaryRight}</Text>
             </View>
           )}
           
           {(item.secondary || item.secondaryRight) && (
-            <View style={styles.secondaryRow}>
+            <View style={sectionStyles.secondaryRow}>
               <Text>{item.secondary}</Text>
               <Text>{item.secondaryRight}</Text>
             </View>
           )}
           
           {item.details && (
-            <View style={styles.detailsList}>
+            <View style={sectionStyles.detailsList}>
               {item.details.map((detail, detailIndex) => (
                 <View key={detailIndex} style={{ flexDirection: 'row' }}>
-                  <Text style={styles.bullet}>• </Text>
-                  <Text style={styles.detailItem}>{detail}</Text>
+                  <Text style={sectionStyles.bullet}>• </Text>
+                  <Text style={sectionStyles.detailItem}>{detail}</Text>
                 </View>
               ))}
             </View>

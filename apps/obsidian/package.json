@@ -16,7 +16,8 @@
 		"@react-pdf/renderer": "^4.1.6",
 		"lodash": "^4.17.21",
 		"react": "^19.0.0",
-    	"react-dom": "^19.0.0"
+    	"react-dom": "^19.0.0",
+		"@thecap-cv/components": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.17.14",

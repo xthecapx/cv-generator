@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "pnpm --filter @thecap-cv/components build && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -16,7 +16,8 @@
     "next": "15.1.4",
     "next-remove-imports": "^1.0.12",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@thecap-cv/components": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
