@@ -57,7 +57,7 @@ export function Section({ section }: CvSectionProps) {
       <Text style={sectionStyles.sectionTitle}>{section.title}</Text>
       
       {section.items.map((item, itemIndex) => (
-        <View key={itemIndex} style={sectionStyles.itemContainer}>
+        <View key={itemIndex} style={sectionStyles.itemContainer} break={item.break}>
           {(item.primary || item.primaryRight) && (
             <View style={sectionStyles.headerRow}>
               <Text style={sectionStyles.primaryText}>{item.primary}</Text>

@@ -119,11 +119,15 @@ export function markdownToCv(markdown: string): CvData {
 
     if (line.startsWith('### ')) {
       if (currentSection) {
-        const [primary, primaryRight] = line.replace('### ', '').split(' | ');
+        const headerLine = line.replace('### ', '');
+        const hasBreak = headerLine.endsWith('\\break');
+        const cleanHeader = hasBreak ? headerLine.slice(0, -6).trim() : headerLine;
+        const [primary, primaryRight] = cleanHeader.split(' | ');
         currentItem = {
           primary,
           primaryRight,
-          details: []
+          details: [],
+          break: hasBreak
         };
         currentSection.items.push(currentItem);
       }
@@ -184,7 +188,8 @@ export function cvToMarkdown(cv?: CvData): string {
     
     section.items.forEach(item => {
       if (item.primary) {
-        markdown += `### ${item.primary}${item.primaryRight ? ` | ${item.primaryRight}` : ''}\n`;
+        const header = `### ${item.primary}${item.primaryRight ? ` | ${item.primaryRight}` : ''}${item.break ? ' \\break' : ''}\n`;
+        markdown += header;
       }
       if (item.secondary) {
         markdown += `#### ${item.secondary}${item.secondaryRight ? ` | ${item.secondaryRight}` : ''}\n`;

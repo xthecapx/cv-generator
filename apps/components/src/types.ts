@@ -16,6 +16,7 @@ export interface CvItem {
   secondary?: string;
   secondaryRight?: string;
   details: string[];
+  break?: boolean;
 }
 
 export interface CvSection {
