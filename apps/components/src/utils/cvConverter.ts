@@ -1,3 +1,4 @@
+import { parse } from 'yaml';
 import { ContactInfo, CvData, CvItem, CvProperties, CvSection } from "../types";
 
 
@@ -12,39 +13,17 @@ export function parseYamlFrontmatter(markdown: string): { properties: CvProperti
   }
 
   const [, frontmatter, content] = match;
-  const properties: CvProperties = {};
-  let currentArrayKey: string | null = null;
-
-  frontmatter.split('\n').forEach(line => {
-    const trimmedLine = line.trim();
-    if (!trimmedLine) return;
-
-    if (trimmedLine.startsWith('- ') && currentArrayKey) {
-      properties[currentArrayKey] = properties[currentArrayKey] || [];
-      (properties[currentArrayKey] as string[]).push(trimmedLine.slice(2).trim());
-      return;
-    }
-
-    const [key, ...valueParts] = trimmedLine.split(':');
-    const trimmedKey = key?.trim();
-    const value = valueParts.join(':').trim();
-    
-    if (!trimmedKey || value === '') {
-      currentArrayKey = trimmedKey || null;
-      return;
-    }
-
-    if (value.startsWith('- ')) {
-      currentArrayKey = trimmedKey;
-      properties[trimmedKey] = properties[trimmedKey] || [];
-      (properties[trimmedKey] as string[]).push(value.slice(2).trim());
-    } else {
-      currentArrayKey = null;
-      properties[trimmedKey] = value;
-    }
-  });
-
-  return { properties, content: content.trim() };
+  
+  try {
+    const properties = parse(frontmatter) as CvProperties;
+    return { 
+      properties: properties || {}, 
+      content: content.trim() 
+    };
+  } catch (error) {
+    console.error('Error parsing frontmatter:', error);
+    return { properties: {}, content: markdown };
+  }
 }
 
 export function markdownToCv(markdown: string): CvData {
