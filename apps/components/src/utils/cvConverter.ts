@@ -124,6 +124,23 @@ export function markdownToCv(markdown: string): CvData {
       currentItem.details.push(line.replace('- ', ''));
       continue;
     }
+
+    // Plain paragraph support: a non-heading, non-bullet line right after
+    // `##` (no item yet) becomes a paragraph item rendered without bullets.
+    if (currentSection && !currentItem) {
+      currentItem = {
+        details: [line],
+        plain: true
+      };
+      currentSection.items.push(currentItem);
+      continue;
+    }
+
+    // Consecutive plain lines join the current paragraph item.
+    if (currentItem?.plain) {
+      currentItem.details.push(line);
+      continue;
+    }
   }
 
   if (currentSection) {

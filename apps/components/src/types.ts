@@ -16,6 +16,8 @@ export interface CvItem {
   secondary?: string;
   secondaryRight?: string;
   details: string[];
+  /** Plain paragraph item: details render as stacked text without bullets */
+  plain?: boolean;
   break?: boolean;
 }
 
