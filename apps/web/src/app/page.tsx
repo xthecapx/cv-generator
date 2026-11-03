@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { FloatingActions } from '@/components/FloatingActions';
 import dynamic from 'next/dynamic';
 import '@uiw/react-md-editor/markdown-editor.css';
@@ -42,6 +42,8 @@ export default function Home() {
     if (storedData) {
       try {
         const parsedData: CvData = JSON.parse(storedData);
+        // Hydrate browser-only storage after mount to keep server and client markup consistent.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCvData(parsedData);
         return;
       } catch (error) {
@@ -87,7 +89,7 @@ export default function Home() {
 
   };
 
-  const updateCv = (value: string) => {
+  const updateCv = useCallback((value: string) => {
     try {
       setIsUpdating(true);
       const newCvData = markdownToCv(value);
@@ -100,9 +102,11 @@ export default function Home() {
       console.error('Error parsing markdown:', error);
       setIsUpdating(false);
     }
-  }
+  }, []);
 
-  const debouncedUpdateCv = useCallback(debounce(updateCv, 2000), []);
+  const debouncedUpdateCv = useMemo(() => debounce(updateCv, 2000), [updateCv]);
+
+  useEffect(() => () => debouncedUpdateCv.cancel(), [debouncedUpdateCv]);
 
   const handleMarkdownChange = (newValue?: string) => {
     if (newValue !== undefined) {

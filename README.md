@@ -22,7 +22,7 @@ A plugin for Obsidian that allows you to manage and preview your CV directly wit
 
 ### Prerequisites
 
-- Node.js >= 10
+- Node.js >= 20.9.0
 - pnpm >= 9
 
 ### Setup
