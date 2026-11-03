@@ -53,6 +53,52 @@ Then, start the Obsidian plugin development server:
 pnpm dev:obsidian
 ```
 
+## Publishing the Obsidian plugin
+
+Run releases from this monorepo, where the shared components can be built. Install
+the GitHub CLI (`gh`) and sign in with `gh auth login` using an account that can
+push to both repositories. Commit your changes first, and check out `main` in both
+the monorepo and `apps/obsidian`. Install dependencies with `pnpm install`.
+
+Preview the next release without changing files or contacting GitHub:
+
+```bash
+pnpm release:obsidian 1.0.8 --dry-run
+```
+
+After testing the plugin locally, publish it with:
+
+```bash
+pnpm release:obsidian 1.0.8
+```
+
+Choose a version newer than the current plugin version, in `x.y.z` format without
+a `v` prefix. The command updates `package.json`, `manifest.json`, and
+`versions.json` directly, preserving `minAppVersion` and avoiding npm's
+incompatibility with `workspace:*` dependencies. It builds the shared components
+and plugin, commits the version files, creates an annotated tag, and pushes the
+plugin's `main` branch and tag to `xthecapx/Thecap-cv-generator`. It also commits
+and pushes the updated submodule reference in `xthecapx/cv-generator`.
+
+The GitHub release starts as a draft. The command uploads `main.js`,
+`manifest.json`, and `styles.css`, verifies the attachments, and publishes the
+release as the latest stable version. Running this command pushes commits and
+publishes publicly without another confirmation prompt.
+
+If a build fails before the version commit, the original version files are
+restored. Fix the error and rerun the same command. If a later step fails, the
+command preserves its commits and any draft release. Keep the source unchanged,
+resolve the reported problem, and continue with:
+
+```bash
+pnpm release:obsidian 1.0.8 --resume
+```
+
+Resume refuses tags pointing to a different commit and never replaces attachments
+on an already-public release. No new npm package or Obsidian directory submission
+is needed for this release workflow. Run `pnpm test:release` to check the script's
+success and failure paths without making real releases.
+
 ## Markdown Format
 
 The CV format follows a specific structure that maps to our type definitions. Here's a detailed breakdown:

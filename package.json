@@ -8,6 +8,8 @@
     "build": "pnpm --filter './apps/**' build",
     "build:web": "pnpm build:components && pnpm --filter @thecap-cv/web build",
     "build:obsidian": "pnpm build:components && pnpm --filter @thecap-cv/obsidian build",
+    "release:obsidian": "node scripts/release-obsidian.mjs",
+    "test:release": "node --test scripts/release-obsidian.test.mjs",
     "build:components": "pnpm --filter @thecap-cv/components build",
     "lint:web": "pnpm --filter @thecap-cv/web lint",
     "lint": "pnpm --filter './apps/**' lint"
