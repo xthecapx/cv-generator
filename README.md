@@ -105,13 +105,14 @@ The CV format follows a specific structure that maps to our type definitions. He
 
 ### Properties (YAML Frontmatter)
 
-Properties are defined at the top of the file and will be used for metadata and filtering (future feature):
+Properties are defined at the top of the file. Set `font-size` to a number from 8 to 20 to scale the PDF text (the default is 12). In Obsidian, this overrides the plugin's default PDF text size for this note:
 
 ```yaml
 ---
 title: Title property
 year: 2025
 favorite: true
+font-size: 12
 tags:
   - CV
   - Curriculum Vitae
@@ -131,7 +132,18 @@ The contact section starts with an H1 heading containing your name, followed by 
 - Location: Honolulu, HI
 - LinkedIn: linkedin.com/in/mclovin-hawaii
 - GitHub: github.com/thereal-mclovin
+- Website: [Portfolio](https://example.com)
+- Languages: English: fluent; Spanish: fluent
 ```
+
+`title` appears beneath your name. Phone, email, location, LinkedIn, and GitHub
+have built-in formatting; any other `key: value` entries appear in the contact
+header with their labels preserved. Values may contain colons. Use a full
+`https://` URL or a Markdown link for clickable custom fields.
+
+For Chinese and other characters outside the default font's coverage, the
+Obsidian plugin can load a font from your vault. See the plugin's
+[PDF font settings](apps/obsidian/README.md#pdf-text-size-and-fonts).
 
 ### Sections
 

@@ -1,4 +1,4 @@
-import { parse } from 'yaml';
+import { parse, stringify } from 'yaml';
 import { ContactInfo, CvData, CvItem, CvProperties, CvSection } from "../types";
 
 
@@ -6,10 +6,11 @@ export const CV_STORAGE_KEY = 'cvData';
 
 export function parseYamlFrontmatter(markdown: string): { properties: CvProperties, content: string } {
   const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-  const match = markdown.match(frontmatterRegex);
+  const normalized = markdown.replace(/\r\n?/g, '\n');
+  const match = normalized.match(frontmatterRegex);
 
   if (!match) {
-    return { properties: {}, content: markdown };
+    return { properties: {}, content: normalized };
   }
 
   const [, frontmatter, content] = match;
@@ -17,12 +18,12 @@ export function parseYamlFrontmatter(markdown: string): { properties: CvProperti
   try {
     const properties = parse(frontmatter) as CvProperties;
     return { 
-      properties: properties || {}, 
+      properties: properties && typeof properties === 'object' && !Array.isArray(properties) ? properties : {},
       content: content.trim() 
     };
   } catch (error) {
     console.error('Error parsing frontmatter:', error);
-    return { properties: {}, content: markdown };
+    return { properties: {}, content: normalized };
   }
 }
 
@@ -51,9 +52,14 @@ export function markdownToCv(markdown: string): CvData {
     if (line.startsWith('# ')) {
       cv.contact.name = line.replace('# ', '');
       
-      while (i + 1 < lines.length && lines[i + 1].startsWith('- ')) {
+      while (i + 1 < lines.length && lines[i + 1].trim().startsWith('- ')) {
         i++;
-        const [key, value] = lines[i].replace('- ', '').split(': ');
+        const entry = lines[i].trim().slice(2);
+        const separator = entry.indexOf(':');
+        if (separator < 1) continue;
+        const key = entry.slice(0, separator).trim();
+        const value = entry.slice(separator + 1).trim();
+        if (!key || !value) continue;
         if (key.toLowerCase() === 'title') {
           cv.contact.title = value;
         } else if (key.toLowerCase() === 'phone') {
@@ -67,6 +73,8 @@ export function markdownToCv(markdown: string): CvData {
             text: key,
             url: value
           });
+        } else {
+          (cv.contact.details ??= []).push({ label: key, value });
         }
       }
       continue;
@@ -156,15 +164,7 @@ export function cvToMarkdown(cv?: CvData): string {
   let markdown = '';
 
   if (cv.properties && Object.keys(cv.properties).length > 0) {
-    markdown += '---\n';
-    Object.entries(cv.properties).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        markdown += `${key}:\n${value.map(item => `  - ${item}`).join('\n')}\n`;
-      } else if (value) {
-        markdown += `${key}: ${value}\n`;
-      }
-    });
-    markdown += '---\n\n';
+    markdown += `---\n${stringify(cv.properties)}---\n\n`;
   }
 
   markdown += `# ${cv.contact.name}\n`;
@@ -175,6 +175,9 @@ export function cvToMarkdown(cv?: CvData): string {
   
   cv.contact.links.forEach(link => {
     markdown += `- ${link.text}: ${link.url}\n`;
+  });
+  cv.contact.details?.forEach(detail => {
+    markdown += `- ${detail.label}: ${detail.value}\n`;
   });
 
   markdown += '\n';
@@ -192,7 +195,7 @@ export function cvToMarkdown(cv?: CvData): string {
       }
       
       item.details.forEach(detail => {
-        markdown += `- ${detail}\n`;
+        markdown += `${item.plain ? '' : '- '}${detail}\n`;
       });
       markdown += '\n';
     });
@@ -240,4 +243,4 @@ export function validateCvMarkdown(markdown: string): { isValid: boolean; errors
     isValid: errors.length === 0,
     errors
   };
-} 
+}

@@ -8,6 +8,8 @@ export interface ContactInfo {
     text: string;
     url: string;
   }>;
+  /** Additional labeled values, preserved when exporting back to Markdown. */
+  details?: Array<{ label: string; value: string }>;
 }
 
 export interface CvItem {
@@ -28,7 +30,14 @@ export interface CvSection {
 }
 
 export interface CvProperties {
-  [key: string]: string | string[] | undefined;
+  [key: string]: string | number | boolean | string[] | undefined;
+}
+
+export interface CvRenderOptions {
+  /** Base text size in points (8–20); the default is 12. */
+  fontSize?: number;
+  /** A font family already registered with React PDF. */
+  fontFamily?: string;
 }
 
 export interface CvData {

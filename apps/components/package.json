@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "vite build",
+    "test": "pnpm build && node --test tests/*.test.mjs",
     "dev": "vite build --watch"
   },
   "dependencies": {
@@ -29,4 +30,4 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
-} 
+}

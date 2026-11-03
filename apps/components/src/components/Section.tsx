@@ -1,5 +1,6 @@
 import { View, Text, Link, StyleSheet } from '@react-pdf/renderer';
 import { CvSection as CvSectionType } from '@/types';
+import { cjkHyphenation } from '@/utils/cjkText';
 
 const MARKDOWN_LINK = /^\[([^\]]+)\]\(([^)]+)\)$/;
 
@@ -7,11 +8,11 @@ function normalizeUrl(url: string): string {
   return /^(https?:|mailto:|tel:)/i.test(url) ? url : `https://${url}`;
 }
 
-function DetailText({ text }: { text: string }) {
+function DetailText({ text, scale }: { text: string; scale: number }) {
   const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g).filter(Boolean);
 
   return (
-    <Text style={sectionStyles.detailItem}>
+    <Text hyphenationCallback={cjkHyphenation(text)} style={[sectionStyles.detailItem, { fontSize: 10 * scale }]}>
       {parts.map((part, index) => {
         const match = part.match(MARKDOWN_LINK);
         if (match) {
@@ -33,7 +34,7 @@ export const sectionStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 14,
-    fontFamily: 'Helvetica-Bold',
+    fontWeight: 700,
     textTransform: 'uppercase',
     borderBottomWidth: 1,
     borderBottomColor: '#333333',
@@ -50,7 +51,8 @@ export const sectionStyles = StyleSheet.create({
     marginBottom: 1,
   },
   primaryText: {
-    fontFamily: 'Helvetica-Bold',
+    fontWeight: 700,
+    flexShrink: 1,
   },
   secondaryRow: {
     flexDirection: 'row',
@@ -67,6 +69,7 @@ export const sectionStyles = StyleSheet.create({
   detailItem: {
     fontSize: 10,
     marginBottom: 1,
+    flexShrink: 1,
   },
   bullet: {
     width: 6,
@@ -75,26 +78,28 @@ export const sectionStyles = StyleSheet.create({
 
 interface CvSectionProps {
   section: CvSectionType;
+  scale?: number;
+  customFont?: boolean;
 }
 
-export function Section({ section }: CvSectionProps) {
+export function Section({ section, scale = 1, customFont = false }: CvSectionProps) {
   return (
     <View style={sectionStyles.section} break={section.break}>
-      <Text style={sectionStyles.sectionTitle}>{section.title}</Text>
+      <Text hyphenationCallback={cjkHyphenation(section.title)} style={[sectionStyles.sectionTitle, { fontSize: 14 * scale }, customFont ? {} : { fontFamily: 'Helvetica-Bold' }]}>{section.title}</Text>
       
       {section.items.map((item, itemIndex) => (
         <View key={itemIndex} style={sectionStyles.itemContainer} break={item.break}>
           {(item.primary || item.primaryRight) && (
             <View style={sectionStyles.headerRow}>
-              <Text style={sectionStyles.primaryText}>{item.primary}</Text>
-              <Text>{item.primaryRight}</Text>
+              <Text hyphenationCallback={cjkHyphenation(item.primary || '')} style={[sectionStyles.primaryText, customFont ? {} : { fontFamily: 'Helvetica-Bold' }]}>{item.primary}</Text>
+              <Text hyphenationCallback={cjkHyphenation(item.primaryRight || '')} style={{ flexShrink: 1, marginLeft: 8, textAlign: 'right' }}>{item.primaryRight}</Text>
             </View>
           )}
           
           {(item.secondary || item.secondaryRight) && (
-            <View style={sectionStyles.secondaryRow}>
-              <Text>{item.secondary}</Text>
-              <Text>{item.secondaryRight}</Text>
+            <View style={[sectionStyles.secondaryRow, { fontSize: 10 * scale, fontStyle: customFont ? 'normal' : 'italic' }, customFont ? {} : { fontFamily: 'Helvetica-Oblique' }]}>
+              <Text hyphenationCallback={cjkHyphenation(item.secondary || '')} style={{ flexShrink: 1 }}>{item.secondary}</Text>
+              <Text hyphenationCallback={cjkHyphenation(item.secondaryRight || '')} style={{ flexShrink: 1, marginLeft: 8, textAlign: 'right' }}>{item.secondaryRight}</Text>
             </View>
           )}
           
@@ -102,14 +107,12 @@ export function Section({ section }: CvSectionProps) {
             <View style={sectionStyles.detailsList}>
               {item.plain
                 ? item.details.map((detail, detailIndex) => (
-                    <Text key={detailIndex} style={sectionStyles.detailItem}>
-                      <DetailText text={detail} />
-                    </Text>
+                    <DetailText key={detailIndex} text={detail} scale={scale} />
                   ))
                 : item.details.map((detail, detailIndex) => (
                     <View key={detailIndex} style={{ flexDirection: 'row' }}>
-                      <Text style={sectionStyles.bullet}>• </Text>
-                      <DetailText text={detail} />
+                      <Text style={[sectionStyles.bullet, { width: 6 * scale, fontSize: 10 * scale }]}>• </Text>
+                      <DetailText text={detail} scale={scale} />
                     </View>
                   ))}
             </View>
@@ -118,4 +121,4 @@ export function Section({ section }: CvSectionProps) {
       ))}
     </View>
   );
-} 
+}
