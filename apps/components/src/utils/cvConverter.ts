@@ -123,6 +123,12 @@ export function markdownToCv(markdown: string): CvData {
 
     if (line.startsWith('#### ') && currentItem) {
       const [secondary, secondaryRight] = line.replace('#### ', '').split(' | ');
+      if (currentItem.secondary !== undefined && currentSection) {
+        // A further #### under the same ###: start a new item without a primary,
+        // so earlier roles aren't overwritten and the company header isn't repeated.
+        currentItem = { details: [] };
+        currentSection.items.push(currentItem);
+      }
       currentItem.secondary = secondary;
       currentItem.secondaryRight = secondaryRight;
       continue;

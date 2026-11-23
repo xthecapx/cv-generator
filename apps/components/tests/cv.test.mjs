@@ -84,3 +84,33 @@ test('note font-size overrides the plugin default and old CV objects still rende
   const oldDocument = CvDocument({ cvData: cv, options: { fontSize: 10 } });
   assert.equal(oldDocument.props.children.props.style[1].fontSize, 10);
 });
+
+test('multiple #### roles under one ### are all kept, with their own bullets', () => {
+  const md = `# Jane Doe
+- title: Engineer
+- email: jane@example.com
+## Experience
+### Acme Corp | Remote
+#### Senior Engineer | 2022–2024
+- Led the platform team.
+#### Engineer | 2019–2022
+- Built the API.
+- Wrote the docs.
+### Other Co
+#### Intern | 2018
+- Fixed bugs.
+`;
+  const items = markdownToCv(md).sections[0].items;
+  assert.equal(items.length, 3);
+  assert.deepEqual(items[0], { primary: 'Acme Corp', primaryRight: 'Remote', details: ['Led the platform team.'], break: false, secondary: 'Senior Engineer', secondaryRight: '2022–2024' });
+  assert.equal(items[1].primary, undefined);
+  assert.equal(items[1].secondary, 'Engineer');
+  assert.equal(items[1].secondaryRight, '2019–2022');
+  assert.deepEqual(items[1].details, ['Built the API.', 'Wrote the docs.']);
+  assert.equal(items[2].primary, 'Other Co');
+  assert.equal(items[2].secondary, 'Intern');
+
+  // single #### under ### is unchanged, and the multi-role CV round-trips
+  const cv = markdownToCv(md);
+  assert.deepEqual(markdownToCv(cvToMarkdown(cv)), cv);
+});
