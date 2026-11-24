@@ -8,7 +8,7 @@ import { parseVersion, releaseObsidian } from './release-obsidian.mjs';
 
 function fixture(t, {
   fail, dirty = false, wrongAsset = false, resume = false,
-  remoteTag = '', existingRelease = false, publicRelease = false, badDigest = false,
+  remoteTag = '', existingRelease = false, publicRelease = false, badDigest = false, canPush = true, ownerToken = 'owner-token',
 } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'obsidian-release-test-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -34,8 +34,8 @@ function fixture(t, {
       };
     }) : [],
   });
-  const run = (command, args, cwd) => {
-    const call = { command, args, cwd };
+  const run = (command, args, cwd, capture, env) => {
+    const call = { command, args, cwd, env };
     calls.push(call);
     if (fail?.(call)) throw new Error('Simulated failure');
     if (command === 'pnpm') {
@@ -58,7 +58,12 @@ function fixture(t, {
       if (['fetch', 'merge-base', 'add', 'commit', 'tag', 'push', 'reset'].includes(args[0])) return '';
     }
     if (command === 'gh') {
+      if (args[0] === 'auth' && args[1] === 'token') {
+        if (!ownerToken) throw new Error('no account');
+        return ownerToken;
+      }
       if (args[0] === 'auth') return '';
+      if (args[0] === 'api' && args.includes('.permissions.push')) return canPush ? 'true' : 'false';
       if (args[0] === 'api') return JSON.stringify(args.includes('--slurp') ? [existingRelease ? [{ tag_name: '1.0.8', draft }] : []] : release());
       if (args[1] === 'create') {
         assert.ok(args.includes('--draft'));
@@ -178,4 +183,27 @@ test('resume verifies a public release without uploading or editing it', t => {
   const f = fixture(t, { resume: true, existingRelease: true, publicRelease: true });
   releaseObsidian('1.0.8', { ...f, resume: true });
   assert.ok(!f.calls.some(c => c.command === 'gh' && ['create', 'upload', 'edit'].includes(c.args[1])));
+});
+
+test('uses the repository owner gh account for release commands', t => {
+  const f = fixture(t);
+  releaseObsidian('1.0.8', f);
+  const ghCalls = f.calls.filter(c => c.command === 'gh' && c.args[1] !== 'token');
+  assert.ok(ghCalls.length > 0);
+  assert.ok(ghCalls.every(c => c.env?.GH_TOKEN === 'owner-token'));
+  assert.ok(f.calls.find(c => c.args[1] === 'token').args.includes('xthecapx'));
+});
+
+test('falls back to the active gh account when the owner is not logged in', t => {
+  const f = fixture(t, { ownerToken: null });
+  releaseObsidian('1.0.8', f);
+  assert.ok(f.calls.filter(c => c.command === 'gh' && c.args[1] !== 'token').every(c => !c.env?.GH_TOKEN));
+});
+
+test('gh account without push access fails before building or pushing', t => {
+  const f = fixture(t, { canPush: false });
+  const before = readFileSync(join(f.plugin, 'manifest.json'), 'utf8');
+  assert.throws(() => releaseObsidian('1.0.8', f), /cannot create releases/);
+  assert.equal(readFileSync(join(f.plugin, 'manifest.json'), 'utf8'), before);
+  assert.ok(!f.calls.some(c => c.command === 'pnpm' || c.args[0] === 'push'));
 });

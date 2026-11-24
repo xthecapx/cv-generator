@@ -12,15 +12,17 @@ const help = `Usage: pnpm release:obsidian <version> [--dry-run | --resume]
 
 Example: pnpm release:obsidian 1.0.8
 Commit your changes first. Requires main in both repositories, pnpm, and gh auth login.
+gh needs push access to the plugin repository. If several GitHub accounts are logged in,
+the one named after the repository owner is used (gh auth login adds another account).
 Creates and pushes version commits in both repositories, a tag, and a public GitHub release.
 --dry-run  Print the plan without changing files, building, or accessing the network.
 --resume   Continue an interrupted release after its plugin version commit was created.`;
 
-function execute(command, args, cwd, capture = true) {
+function execute(command, args, cwd, capture = true, env = {}) {
   console.log(`> ${command} ${args.join(' ')}`);
   const result = spawnSync(command, args, {
     cwd, encoding: 'utf8', stdio: capture ? 'pipe' : 'inherit',
-    env: { ...process.env, GH_PROMPT_DISABLED: '1' },
+    env: { ...process.env, GH_PROMPT_DISABLED: '1', ...env },
   });
   if (result.error) throw result.error;
   if (result.status !== 0) {
@@ -79,7 +81,18 @@ export function releaseObsidian(version, {
   }
 
   const git = (cwd, ...args) => run('git', args, cwd);
-  const gh = (...args) => run('gh', args, root);
+  // Git pushes over SSH can use a different GitHub account than gh. Prefer the gh account
+  // named after the repository owner so releases are created by an account that can push.
+  const ghEnv = {};
+  if (!process.env.GH_TOKEN && !process.env.GITHUB_TOKEN) {
+    try {
+      const token = run('gh', ['auth', 'token', '--user', repository.split('/')[0]], root);
+      if (token) ghEnv.GH_TOKEN = token;
+    } catch {
+      // That account is not logged in to gh; fall back to the active account.
+    }
+  }
+  const gh = (...args) => run('gh', args, root, true, ghEnv);
   const releaseMessage = `chore: release ${version}`;
   for (const [cwd, expectedRepo] of [[root, 'xthecapx/cv-generator'], [plugin, repository]]) {
     if (git(cwd, 'branch', '--show-current') !== 'main') throw new Error(`Check out main in ${cwd} first.`);
@@ -100,6 +113,10 @@ export function releaseObsidian(version, {
     throw new Error('apps/obsidian must be a Git submodule.');
   }
   gh('auth', 'status');
+  // Check before anything is pushed, so a wrong gh account cannot leave a half-finished release.
+  if (gh('api', `repos/${repository}`, '--jq', '.permissions.push') !== 'true') {
+    throw new Error(`The gh account cannot create releases in ${repository}. Run: gh auth login (as ${repository.split('/')[0]}), or set GH_TOKEN to a token with push access.`);
+  }
   const releases = JSON.parse(gh('api', `repos/${repository}/releases`, '--paginate', '--slurp')).flat();
   let release = releases.find(item => item.tag_name === version);
   const localTag = git(plugin, 'tag', '--list', version);
