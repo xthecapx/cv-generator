@@ -4,6 +4,12 @@ import { ContactInfo, CvData, CvItem, CvProperties, CvSection } from "../types";
 
 export const CV_STORAGE_KEY = 'cvData';
 
+// A Markdown bullet: `-` or `*` followed by whitespace. `*emphasis*` lines are not bullets.
+const BULLET_PATTERN = /^[-*]\s+/;
+
+const isBullet = (line: string) => BULLET_PATTERN.test(line);
+const bulletText = (line: string) => line.replace(BULLET_PATTERN, '');
+
 export function parseYamlFrontmatter(markdown: string): { properties: CvProperties, content: string } {
   const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
   const normalized = markdown.replace(/\r\n?/g, '\n');
@@ -52,9 +58,9 @@ export function markdownToCv(markdown: string): CvData {
     if (line.startsWith('# ')) {
       cv.contact.name = line.replace('# ', '');
       
-      while (i + 1 < lines.length && lines[i + 1].trim().startsWith('- ')) {
+      while (i + 1 < lines.length && isBullet(lines[i + 1].trim())) {
         i++;
-        const entry = lines[i].trim().slice(2);
+        const entry = bulletText(lines[i].trim());
         const separator = entry.indexOf(':');
         if (separator < 1) continue;
         const key = entry.slice(0, separator).trim();
@@ -95,11 +101,11 @@ export function markdownToCv(markdown: string): CvData {
       continue;
     }
 
-    if (line.startsWith('- ') && currentSection && !currentItem) {
+    if (isBullet(line) && currentSection && !currentItem) {
       currentItem = {
         details: []
       };
-      currentItem.details.push(line.replace('- ', ''));
+      currentItem.details.push(bulletText(line));
       currentSection.items.push(currentItem);
       continue;
     }
@@ -134,8 +140,8 @@ export function markdownToCv(markdown: string): CvData {
       continue;
     }
 
-    if (line.startsWith('- ') && currentItem) {
-      currentItem.details.push(line.replace('- ', ''));
+    if (isBullet(line) && currentItem) {
+      currentItem.details.push(bulletText(line));
       continue;
     }
 

@@ -30,64 +30,62 @@ const MemoizedPDFViewer = memo(
 
 MemoizedPDFViewer.displayName = 'MemoizedPDFViewer';
 
+// The raw Markdown draft is the source of truth for editing and export, so text
+// the parser skips is never lost. Older sessions only stored parsed data.
+const MARKDOWN_STORAGE_KEY = 'cvMarkdown';
+
+function readStoredMarkdown(): string | null {
+  try {
+    const markdown = localStorage.getItem(MARKDOWN_STORAGE_KEY);
+    if (markdown !== null) return markdown;
+    const legacy = localStorage.getItem(CV_STORAGE_KEY);
+    if (legacy) return cvToMarkdown(JSON.parse(legacy) as CvData);
+  } catch (error) {
+    console.error('Error reading stored CV:', error);
+  }
+  return null;
+}
+
+function storeMarkdown(markdown: string | null) {
+  try {
+    if (markdown === null) {
+      localStorage.removeItem(MARKDOWN_STORAGE_KEY);
+      localStorage.removeItem(CV_STORAGE_KEY);
+    } else {
+      localStorage.setItem(MARKDOWN_STORAGE_KEY, markdown);
+    }
+  } catch (error) {
+    console.error('Error saving CV:', error);
+  }
+}
+
 export default function Home() {
   const [cvData, setCvData] = useState<CvData | undefined>(undefined);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [localMarkdown, setLocalMarkdown] = useState('');
+  const [markdown, setMarkdown] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    const storedData = localStorage.getItem(CV_STORAGE_KEY);
-    if (storedData) {
-      try {
-        const parsedData: CvData = JSON.parse(storedData);
-        // Hydrate browser-only storage after mount to keep server and client markup consistent.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setCvData(parsedData);
-        return;
-      } catch (error) {
-        console.error('Error parsing stored CV:', error);
-      }
+    const stored = readStoredMarkdown();
+    if (stored !== null) {
+      // Hydrate browser-only storage after mount to keep server and client markup consistent.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMarkdown(stored);
+      setCvData(markdownToCv(stored));
+      return;
     }
 
     fetch('/api/default-cv')
       .then(res => res.text())
-      .then(markdown => {
-        const cv = markdownToCv(markdown);
-        setCvData(cv);
+      .then(defaultMarkdown => {
+        setMarkdown(defaultMarkdown);
+        setCvData(markdownToCv(defaultMarkdown));
       })
       .catch(error => {
         console.error('Error loading default CV:', error);
       });
   }, []);
-
-  useEffect(() => {
-    if (cvData) {
-      localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
-    }
-  }, [cvData]);
-
-  const handleClearStorage = () => {
-    if (window.confirm('Are you sure you want to reset to the default CV? This will remove all your changes.')) {
-      localStorage.removeItem(CV_STORAGE_KEY);
-      fetch('/api/default-cv')
-        .then(res => res.text())
-        .then(markdown => {
-          updateCv(markdown);
-        });
-    }
-  };
-
-  const handleToggleEditMode = () => {
-    if (!isEditMode &&cvData) {
-      const md = cvToMarkdown(cvData);
-      setLocalMarkdown(md);
-    }
-
-    setIsEditMode(!isEditMode);
-
-  };
 
   const updateCv = useCallback((value: string) => {
     try {
@@ -108,9 +106,38 @@ export default function Home() {
 
   useEffect(() => () => debouncedUpdateCv.cancel(), [debouncedUpdateCv]);
 
+  // Replace the whole CV (import or reset). A pending edit must not overwrite it.
+  const replaceCv = useCallback((value: string) => {
+    debouncedUpdateCv.cancel();
+    setMarkdown(value);
+    storeMarkdown(value);
+    updateCv(value);
+  }, [debouncedUpdateCv, updateCv]);
+
+  const handleClearStorage = () => {
+    if (window.confirm('Are you sure you want to reset to the default CV? This will remove all your changes.')) {
+      debouncedUpdateCv.cancel();
+      storeMarkdown(null);
+      fetch('/api/default-cv')
+        .then(res => res.text())
+        .then(replaceCv)
+        .catch(error => {
+          console.error('Error loading default CV:', error);
+        });
+    }
+  };
+
+  const handleToggleEditMode = () => {
+    // Leaving edit mode: render the latest draft now instead of waiting for the debounce.
+    if (isEditMode) debouncedUpdateCv.flush();
+    setIsEditMode(!isEditMode);
+  };
+
   const handleMarkdownChange = (newValue?: string) => {
     if (newValue !== undefined) {
-      setLocalMarkdown(newValue);
+      setMarkdown(newValue);
+      // Save the draft immediately so a reload never loses the last keystrokes.
+      storeMarkdown(newValue);
       debouncedUpdateCv(newValue);
     }
   };
@@ -128,7 +155,7 @@ export default function Home() {
           const content = e.target?.result as string;
 
           if (file.name.toLowerCase().endsWith('.md')) {
-            updateCv(content);
+            replaceCv(content);
           } else {
             throw new Error('Unsupported file format');
           }
@@ -139,11 +166,12 @@ export default function Home() {
       };
       reader.readAsText(file);
     }
+    // Allow choosing the same file again after editing.
+    event.target.value = '';
   };
 
   const handleExportMarkdown = () => {
-    const markdownContent = cvToMarkdown(cvData);
-    const blob = new Blob([markdownContent], { type: 'text/markdown' });
+    const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -170,7 +198,7 @@ export default function Home() {
         {isEditMode && (
           <div data-color-mode="light" className="w-1/2 bg-gray-100 p-8 overflow-auto h-screen sticky top-0">
             <MDEditor
-              value={localMarkdown}
+              value={markdown}
               onChange={handleMarkdownChange}
               height="100%"
               preview="edit"

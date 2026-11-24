@@ -14,7 +14,7 @@
     "dev": "vite build --watch"
   },
   "dependencies": {
-    "yaml": "^2.7.0"
+    "yaml": "^2.8.3"
   },
   "peerDependencies": {
     "react": "^19.0.0",
