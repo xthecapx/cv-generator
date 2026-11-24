@@ -114,3 +114,52 @@ test('multiple #### roles under one ### are all kept, with their own bullets', (
   const cv = markdownToCv(md);
   assert.deepEqual(markdownToCv(cvToMarkdown(cv)), cv);
 });
+
+test('asterisk and mixed list markers are read as bullets everywhere', () => {
+  const md = `# Jane Doe
+- title: Engineer
+* email: jane@example.com
+  * location: Remote
+## Skills
+* TypeScript
+- React
+## Experience
+### Acme
+#### Senior Engineer
+- Built the API
+* Led the team
+#### Engineer
+* Wrote the docs
+* Fixed *flaky* tests
+## Summary
+*Emphasised* paragraph text stays plain.
+`;
+  assert.equal(validateCvMarkdown(md).isValid, true);
+  const cv = markdownToCv(md);
+  assert.equal(cv.contact.title, 'Engineer');
+  assert.equal(cv.contact.email, 'jane@example.com');
+  assert.equal(cv.contact.location, 'Remote');
+  const [skills, experience, summary] = cv.sections;
+  assert.deepEqual(skills.items[0].details, ['TypeScript', 'React']);
+  assert.equal(experience.items.length, 2);
+  assert.deepEqual(experience.items[0].details, ['Built the API', 'Led the team']);
+  assert.equal(experience.items[1].secondary, 'Engineer');
+  assert.deepEqual(experience.items[1].details, ['Wrote the docs', 'Fixed *flaky* tests']);
+  assert.equal(summary.items[0].plain, true);
+  assert.deepEqual(summary.items[0].details, ['*Emphasised* paragraph text stays plain.']);
+
+  // Export keeps hyphen markers and re-imports to the same data.
+  const exported = cvToMarkdown(cv);
+  assert.doesNotMatch(exported, /^\* /m);
+  assert.deepEqual(markdownToCv(exported), cv);
+});
+
+test('asterisk-only contact fields produce a valid CV', () => {
+  const md = `# Jane Doe
+* title: Engineer
+* email: jane@example.com
+## Experience
+* Shipped things
+`;
+  assert.deepEqual(validateCvMarkdown(md), { isValid: true, errors: [] });
+});
