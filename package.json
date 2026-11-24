@@ -22,5 +22,16 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
-} 
+  ],
+  "pnpm": {
+    "overrides": {
+      "lodash@<4.18.0": "^4.18.1",
+      "@babel/core@<7.29.6": "^7.29.6",
+      "@babel/helpers@<7.26.10": "^7.26.10",
+      "@babel/runtime@<7.26.10": "^7.26.10",
+      "browserslist@<4.28.7": "^4.28.7",
+      "source-map-js@<1.2.2": "^1.2.2",
+      "mdast-util-to-hast@<13.2.1": "^13.2.1"
+    }
+  }
+}
