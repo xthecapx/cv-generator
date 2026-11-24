@@ -34,13 +34,22 @@ export function FloatingActions({
         <>
           <input
             type="file"
-            accept=".json,.md"
+            accept=".md,text/markdown"
             onChange={onFileUpload}
             className="hidden"
             id="cv-upload"
           />
-          <label 
+          <label
             htmlFor="cv-upload"
+            role="button"
+            tabIndex={0}
+            aria-label="Load CV (.md)"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                document.getElementById('cv-upload')?.click();
+              }
+            }}
             className="group relative bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer"
           >
             <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
